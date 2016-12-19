@@ -1,0 +1,495 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<parsers>
+	<parser>
+		<parser_id>ST_ACCELEROMETER</parser_id>
+		<parsing>
+			<!-- default -->
+			<parsing_type>position</parsing_type>
+			<!-- default -->
+			<format>sint8</format>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<dataClusterModel>acc_st</dataClusterModel>
+					<id>acc_st</id>
+			
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+		<parser>
+
+		<parser_id>ST_THERMOMETER</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<id>term</id>
+					<dataClusterModel>term_st</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+	
+		<parser>
+		<parser_id>ST_SENSOR_FUSION_WESU</parser_id>
+		<parsing>
+			<!-- default -->
+			<parsing_type>position</parsing_type>
+			<!-- default -->
+			<format>sint8</format>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<dataClusterModel>acc_st_wesu</dataClusterModel>
+					<id>acc_st_w</id>
+			
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+	
+	
+	<parser>
+		<parser_id>ST_THERMOMETER_WESU</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<id>term_st_w</id>
+					<dataClusterModel>term_st_wesu</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+	
+	
+	<parser>
+		<parser_id>TI_ACCELEROMETER_AXIS</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<id>acc_ti</id>
+					<dataClusterModel>acc_ti</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+	<parser>
+		<parser_id>TI_BUTTON</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<id>butt_ti1</id>
+					<dataClusterModel>butt_ti1</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<id>butt_ti2</id>
+					<dataClusterModel>butt_ti2</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+	<parser>
+		<parser_id>TI_BATTERY</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<id>batt_ti</id>
+					<dataClusterModel>batt_ti</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+		
+	</parser>
+	
+	<!-- redbear arduino shield -->
+	<!-- the id of the Cluster shall be different from each others -->
+	<parser>
+		<parser_id>REDBEAR_SHIELD</parser_id>
+		<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+		<composition_type>multiple</composition_type>
+		<parsing>
+			<!-- means that the subparser is chosen by the value of the first byte.. in this case the first char  -->
+			<parsing_type>semantic</parsing_type>
+			<format>char8</format>
+			<!-- semantic position is at most "1 B long" -->
+			<semantic_position>0-0</semantic_position>
+		
+			<!-- TODO: the data itself should tell how the related item is -->
+			<sub_parser>
+				<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+				<composition_type>single</composition_type>
+				<id>rbs_gio_parser_value</id>
+					<!-- id which identify this sub_parser in the byte array -->
+				<semantic_id>G</semantic_id>
+				<!-- means that the cluster is chosen by the value of the first byte.. in this case the first int  -->
+				<parsing_type>semantic</parsing_type>
+				<format>uint8</format>
+				<!-- semantic position is at most "1 B long" -->
+				<semantic_position>0-0</semantic_position>
+				<!-- cluster position is always placed immediately subsequent to the semantic position	 -->
+				
+				<dataCluster>
+					<semantic_id>0</semantic_id>
+					<id>rbs_gio0</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>1</semantic_id>
+					<id>rbs_gio1</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>2</semantic_id>
+					<id>rbs_gio2</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>3</semantic_id>
+					<id>rbs_gio3</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>4</semantic_id>
+					<id>rbs_gio4</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>5</semantic_id>
+					<id>rbs_gio5</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>6</semantic_id>
+					<id>rbs_gio6</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>7</semantic_id>
+					<id>rbs_gio7</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>8</semantic_id>
+					<id>rbs_gio8</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>9</semantic_id>
+					<id>rbs_gio9</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>10</semantic_id>
+					<id>rbs_gio10</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>11</semantic_id>
+					<id>rbs_gio11</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>12</semantic_id>
+					<id>rbs_gio12</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>13</semantic_id>
+					<id>rbs_gio13</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>14</semantic_id>
+					<id>rbs_gio14</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>15</semantic_id>
+					<id>rbs_gio15</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>16</semantic_id>
+					<id>rbs_gio16</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>17</semantic_id>
+					<id>rbs_gio17</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>18</semantic_id>
+					<id>rbs_gio18</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>19</semantic_id>
+					<id>rbs_gio19</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>20</semantic_id>
+					<id>rbs_gio20</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+
+				<dataCluster>
+					<semantic_id>28</semantic_id>
+					<id>rbs_gio28</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+
+				<dataCluster>
+					<semantic_id>29</semantic_id>
+					<id>rbs_gio29</id>
+					<dataClusterModel>rbs_gio</dataClusterModel>
+				</dataCluster>
+
+			</sub_parser>
+			
+			<!-- TODO: the data itself should tell how the related item is -->
+			<sub_parser>
+				<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+				<composition_type>single</composition_type>
+				<id>rbs_gio_parser_mode</id>
+					<!-- id which identify this sub_parser in the byte array -->
+				<semantic_id>M</semantic_id>
+				<!-- means that the cluster is chosen by the value of the first byte.. in this case the first int  -->
+				<parsing_type>semantic</parsing_type>
+				<format>uint8</format>
+				<!-- semantic position is at most "1 B long" -->
+				<semantic_position>0-0</semantic_position>
+				<!-- cluster position is always placed immediately subsequent to the semantic position	 -->
+				
+				<dataCluster>
+					<semantic_id>0</semantic_id>
+					<id>rbs_gio0_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>1</semantic_id>
+					<id>rbs_gio1_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>2</semantic_id>
+					<id>rbs_gio2_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>3</semantic_id>
+					<id>rbs_gio3_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>4</semantic_id>
+					<id>rbs_gio4_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>5</semantic_id>
+					<id>rbs_gio5_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>6</semantic_id>
+					<id>rbs_gio6_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>7</semantic_id>
+					<id>rbs_gio7_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>8</semantic_id>
+					<id>rbs_gio8_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>9</semantic_id>
+					<id>rbs_gio9_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>10</semantic_id>
+					<id>rbs_gio10_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>11</semantic_id>
+					<id>rbs_gio11_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>12</semantic_id>
+					<id>rbs_gio12_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>13</semantic_id>
+					<id>rbs_gio13_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>14</semantic_id>
+					<id>rbs_gio14_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>15</semantic_id>
+					<id>rbs_gio15_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>16</semantic_id>
+					<id>rbs_gio16_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>17</semantic_id>
+					<id>rbs_gio17_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>18</semantic_id>
+					<id>rbs_gio18_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+				<dataCluster>
+					<semantic_id>19</semantic_id>
+					<id>rbs_gio19_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+			
+				<dataCluster>
+					<semantic_id>20</semantic_id>
+					<id>rbs_gio20_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+
+				<dataCluster>
+					<semantic_id>28</semantic_id>
+					<id>rbs_gio28_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+
+				<dataCluster>
+					<semantic_id>29</semantic_id>
+					<id>rbs_gio29_m</id>
+					<dataClusterModel>rbs_gio_m</dataClusterModel>
+				</dataCluster>
+				
+			</sub_parser>
+			
+			<sub_parser>
+				<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+				<composition_type>single</composition_type>
+				<id>rbs_gio_parser_version</id>
+					<!-- id which identify this sub_parser in the byte array -->
+				<semantic_id>V</semantic_id>
+				<!-- cluster position is always placed immediately subsequent to the semantic position	 -->
+				<dataCluster>
+					<id>rbs_gio_v</id>
+					<dataClusterModel>rbs_gio_v</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+			
+			<sub_parser>
+				<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+				<composition_type>single</composition_type>
+				<id>rbs_gio_parser_pin_cont</id>
+					<!-- id which identify this sub_parser in the byte array -->
+				<semantic_id>C</semantic_id>
+				<!-- cluster position is always placed immediately subsequent to the semantic position	 -->
+				<dataCluster>
+					<id>rbs_gio_pc</id>
+					<dataClusterModel>rbs_gio_pc</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+			
+			<sub_parser>
+				<!-- parsers and dataclusters can't be simultaneusly multiple, parser prevails -->
+				<composition_type>single</composition_type>
+				<id>rbs_gio_parser_capabilities</id>
+					<!-- id which identify this sub_parser in the byte array -->
+				<semantic_id>P</semantic_id>
+				<!-- cluster position is always placed immediately subsequent to the semantic position	 -->
+				<dataCluster>
+					<id>rbs_gio_cap</id>
+					<dataClusterModel>rbs_gio_cap</dataClusterModel>
+				</dataCluster>
+			</sub_parser>
+			
+		</parsing>
+	</parser>
+	
+	<parser>
+		<parser_id>RASPI</parser_id>
+		<parsing>
+			<!-- default -->
+			<parsing_type>position</parsing_type>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<dataClusterModel>cl_raspi</dataClusterModel>
+					<id>cl_raspi</id>
+			
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+	
+</parsers>

@@ -1,0 +1,484 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<dataclustermodels>
+
+
+	
+	<dataClusterModel>
+
+					<id>acc_st</id>
+ 					<data_handling>
+						<type>array</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						<id>acc_x</id>
+						<position>0-1</position>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_x</type>
+							<description>accelerometer x axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>2-3</position>
+						<id>acc_y</id>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_y</type>
+							<description>accelerometer y axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>4-5</position>
+						<id>acc_z</id>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_z</type>
+							<description>accelerometer z axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+		</dataClusterModel>
+		
+	<dataClusterModel>
+					<id>term_st</id>
+					<data_handling>
+						<type>single</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						<format>sint16</format>
+						<id>temperature</id>
+						<position>0-1</position>
+						<intercept>0</intercept>
+						<slope>0.1</slope>
+						<data_handling>
+							<type>scaled</type>
+						</data_handling>
+						
+						<sensor>
+							<type>temperature</type>
+							<description>temperature from ST base sensor</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>-10-80</measurementRange>
+							<precision>1</precision>
+							<unit>°mC</unit>
+						</sensor>
+					</subdata>
+			
+				</dataClusterModel>
+				
+					
+	<dataClusterModel>
+
+					<id>acc_st_wesu</id>
+ 					<data_handling>
+						<type>array</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					
+					<subdata>
+						<format>uint16</format>
+						<id>time_stamp</id>
+						<type>time_stamp</type>
+						<position>0-1</position>
+					</subdata>
+					
+					
+					<subdata>
+						<id>acc_x</id>
+						<position>2-3</position>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_x</type>
+							<description>accelerometer x axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>4-5</position>
+						<id>acc_y</id>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_y</type>
+							<description>accelerometer y axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>6-7</position>
+						<id>acc_z</id>
+						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_z</type>
+							<description>accelerometer z axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+		</dataClusterModel>
+		
+				
+				
+	<dataClusterModel>
+					<id>term_st_wesu</id>
+					<data_handling>
+						<type>single</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					
+					<subdata>
+						<format>uint16</format>
+						<id>time_stamp</id>
+						<type>time_stamp</type>
+						<position>0-1</position>
+					</subdata>
+					
+					
+					<subdata>
+						<format>sint16</format>
+						<id>temperature</id>
+						<position>2-3</position>
+						<intercept>0</intercept>
+						<slope>0.1</slope>
+						<data_handling>
+							<type>scaled</type>
+						</data_handling>
+						
+						<sensor>
+							<type>temperature</type>
+							<description>temperature from ST base sensor</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>-10-80</measurementRange>
+							<precision>1</precision>
+							<unit>°mC</unit>
+						</sensor>
+					</subdata>
+			
+				</dataClusterModel>
+				
+	<dataClusterModel>
+					<id>butt_ti1</id>
+					<data_handling>
+						<type>onset</type>
+						<value>1</value>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						
+						<data_handling>
+							<type>onset</type>
+							<value>1</value>
+						</data_handling>
+					
+						<format>sint8</format>
+						<id>button</id>
+						<position>0-0</position>
+					</subdata>
+				</dataClusterModel>
+				
+	<dataClusterModel>
+					<id>butt_ti2</id>
+					<data_handling>
+						<type>onset</type>
+						<value>2</value>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+					
+						<data_handling>
+							<type>onset</type>
+							<value>2</value>
+						</data_handling>
+						<!-- int from single byte -->
+						<format>sint8</format>
+						<id>button</id>
+						<position>0-0</position>
+					</subdata>
+				</dataClusterModel>
+				
+	<dataClusterModel>
+					<id>acc_ti</id>
+					<data_handling>
+						<type>single</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						<id>acc_axis</id>
+						<position>0-0</position>
+						<format>sint8</format>
+						<intercept>0</intercept>
+						<slope>15.15</slope>
+						<data_handling>
+							<type>scaled</type>
+						</data_handling>
+						
+						<sensor>
+							<type>accelerometer_axis</type>
+							<description>accelerometer single axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				</dataClusterModel>
+				
+	<dataClusterModel>
+					<id>batt_ti</id>
+					<data_handling>
+						<type>single</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						<id>battery</id>
+						<position>0-0</position>
+						<format>sint8</format>
+						<sensor>
+							<type>battery</type>
+							<description>device battery</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-3.3</measurementRange>
+							<precision>0.1</precision>
+							<unit>V</unit>
+						</sensor>
+					</subdata>
+				</dataClusterModel>
+
+	<dataClusterModel>
+		<!-- left to match with the Cluster in data parser. It doesn't mean anything here -->
+		<semantic_id>1</semantic_id>
+		<!-- this specifies the data cluster model, shall be modified in the deviceparser implementation -->
+		<id>rbs_gio</id>
+
+		<data_handling>
+			<type>array</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself-->
+	
+		
+		<subdata>
+			<id>mode</id>
+			<!-- position is intended considering the semantic_id -->
+			<position>0-0</position>
+			<format>uint8</format>
+			<bitlogic>
+				<operation>and</operation>
+				<value>0x0F</value>
+			</bitlogic>
+			<type>gpio_mode</type>
+			<!-- the type are special keywords for the library -->
+			<special>
+				<value>input:0</value>
+				<value>output:1</value>
+				<value>analog:2</value>
+				<value>pwm:3</value>
+				<value>servo:4</value>
+			</special>
+		</subdata>
+		
+		<subdata>
+			<id>value</id>
+			<!-- default format value -->
+			<format>uint8</format>
+			<!-- default type value -->
+			<type>gpio_di</type>
+			<position>1-1</position>
+			<dependency>
+				<id>mode</id>
+				<dependencyformat>uint8</dependencyformat>
+				<subconfig>
+					<type>gpio_di</type>
+					<dependencyvalue>0</dependencyvalue>
+					<position>1-1</position>
+					<format>uint8</format>
+				</subconfig>
+				
+				<subconfig>
+					<type>gpio_do</type>
+					<dependencyvalue>1</dependencyvalue>
+					<position>1-1</position>
+					<format>uint8</format>
+				</subconfig>
+				
+				<subconfig>
+					<type>gpio_ai</type>
+					<dependencyvalue>2</dependencyvalue>
+					<position>0-1</position>
+					<format>uint16</format>
+					<bytelogic>((byte1#RS#4#LS#8)#OR#byte2)</bytelogic>
+					<data_handling>
+						<type>scaled</type>
+					</data_handling>
+					<intercept>0</intercept>
+					<slope>0.09765625</slope>
+				</subconfig>
+				
+				<subconfig>
+					<type>gpio_pwm</type>
+					<dependencyvalue>3</dependencyvalue>
+					<position>1-1</position>
+					<format>uint8</format>
+					<data_handling>
+						<type>scaled</type>
+					</data_handling>
+					<intercept>0</intercept>
+					<slope>0.39</slope>
+				</subconfig>
+				
+				<subconfig>
+					<type>gpio_servo</type>
+					<dependencyvalue>4</dependencyvalue>
+					<position>1-1</position>
+					<format>uint8</format>
+					<data_handling>
+						<type>scaled</type>
+					</data_handling>
+					<intercept>0</intercept>
+					<slope>0.39</slope>
+				</subconfig>
+			</dependency>
+			
+			<!-- position is intended considering the semantic_id -->
+		</subdata>
+	
+	</dataClusterModel>
+	
+	<dataClusterModel>
+		<!-- left to match with the Cluster in data parser. It doesn't mean anything here -->
+		<semantic_id>1</semantic_id>
+		<!-- this specifies the data cluster model, shall be modified in the deviceparser implementation -->
+		<id>rbs_gio_m</id>
+
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself-->
+	
+		
+		<subdata>
+			<id>mode</id>
+			<!-- position is intended considering the semantic_id -->
+			<position>0-0</position>
+			<format>uint8</format>
+			<!-- the type are special keywords for the library -->
+			<type>gpio_mode</type>
+			<special>
+				<value>input:0</value>
+				<value>output:1</value>
+				<value>analog:2</value>
+				<value>pwm:3</value>
+				<value>servo:4</value>
+			</special>
+		</subdata>
+		
+	</dataClusterModel>
+					
+				
+	<dataClusterModel>
+		<id>rbs_gio_v</id>
+
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself-->
+
+		<subdata>
+			<id>mode</id>
+			<!-- position is intended considering the semantic_id -->
+			<position>0-2</position>
+			<format>unused</format>
+			<data_handling>
+				<type>unused</type>
+			</data_handling>
+		</subdata>
+	</dataClusterModel>
+				
+				
+	<dataClusterModel>
+		<id>rbs_gio_pc</id>
+
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself-->
+
+		<subdata>
+			<id>mode</id>
+			<!-- position is intended considering the semantic_id -->
+			<position>0-0</position>
+			<format>unused</format>
+			<data_handling>
+				<type>unused</type>
+			</data_handling>
+		</subdata>
+	</dataClusterModel>
+				
+				
+	<dataClusterModel>
+		<id>rbs_gio_cap</id>
+
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself-->
+
+		<subdata>
+			<id>mode</id>
+			<!-- position is intended considering the semantic_id -->
+			<position>0-1</position>
+			<format>unused</format>
+			<data_handling>
+				<type>unused</type>
+			</data_handling>
+		</subdata>
+	</dataClusterModel>
+			
+	<dataClusterModel>
+		<id>cl_raspi</id>
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+		<subdata>
+			<format>uint8</format>
+			<type>gpio_di</type>
+			<id>gpio_di</id>
+			<position>0-0</position>
+		</subdata>
+	</dataClusterModel>			
+	
+</dataclustermodels>

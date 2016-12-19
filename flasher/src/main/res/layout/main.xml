@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/buttonPanel"
+            android:layout_width="fill_parent"
+            android:layout_height="222dp"
+            android:orientation="vertical"
+            android:gravity="center" >
+
+    <Button
+        android:id="@+id/buttonErase"
+        android:layout_width="221dp"
+        android:layout_height="wrap_content"
+		android:layout_above="@+id/buttonWrite"
+        android:text="erase flash memory" />
+
+
+        <Button
+            android:id="@+id/buttonWrite"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonScan"
+            android:layout_alignParentLeft="true"
+
+            android:gravity="top"
+            android:text="write on flash memory" />
+        
+            
+        <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="221dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="scan for discoverable devices" />
+
+            <Button
+            android:id="@+id/buttonShowResources"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
+            android:text="show stored resources"
+            android:layout_alignStart="@+id/buttonScan" />
+
+
+        </RelativeLayout>
+
+    <RelativeLayout
+    android:id="@+id/loadingPanel"
+    android:layout_width="fill_parent"
+    android:layout_height="175dp"
+    android:gravity="center" >
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

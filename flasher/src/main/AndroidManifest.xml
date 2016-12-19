@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.angelo.bleembeddedflasher"
+    android:versionCode="1"
+    android:versionName="0.1" >
+
+    <uses-sdk
+        android:minSdkVersion="13"
+        android:targetSdkVersion="14" />
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <application
+        android:icon="@drawable/flasher_icon4"
+        android:label="@string/app_name" >
+        <activity
+            android:label="@string/app_name"
+            android:name=".MainActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--start: mandatory for usbserial library
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+             end: mandatory for usbserial library-->
+
+        </activity>
+        
+        <activity
+        android:name="com.angelo.bleembeddedflasher.ble.communication.DeviceScanActivity">
+        </activity>
+        
+        <activity
+        android:name=".ble.device.DeviceControlActivity">
+        </activity>
+
+        <activity
+            android:name="com.angelo.bleembeddedflasher.ble.ResourcesActivity">
+        </activity>
+
+        <provider
+            android:name="com.angelo.bleembeddedflasher.ble.device.myContentProvider"
+            android:authorities="com.angelo.bleembeddedflasher.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+    </application>
+
+</manifest>

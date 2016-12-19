@@ -1,0 +1,41 @@
+
+This is a summary about the licenses of the third-party library or source code used for SAndroidE project development. The full licenses can be found in the NOTICE file.
+
+==================================================================================================
+NOTICE: section for Flasher Application part of SAndroidE project
+==================================================================================================
+---------------------------------------------------------------------------------------------------
+                        The BSD3 License
+        applies to: 
+        - ST-link, 	Copyright (c) 2011 The stlink project (github.com/texane/stlink) contributors.
+					All rights reserved.
+					Copyright (c) 2011 The "Capt'ns Missing Link" Authors. All rights reserved.
+		- java-intelhex-parser, Copyright (c) 2015, Jan Breuer All rights reserved.
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+                        The LGPL License
+        applies to: 
+        - usb-serial-for-android, 	Copyright 2011-2013 Google Inc.
+					Copyright 2013 mike wakerly <opensource@hoho.com>
+---------------------------------------------------------------------------------------------------
+
+==================================================================================================
+NOTICE: section  for Library part of SAndroidE project
+==================================================================================================
+---------------------------------------------------------------------------------------------------
+                        The MIT License (MIT)
+        applies to: 
+        - CogPar, Copyright (c) 2013 Cogito Learning Ltd
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+                        The Apache License, Version 2.0
+        applies to: 
+        - Android BluetoothLeGatt Sample, Copyright (C) 2013 The Android Open Source Project:
+			source code modified in files: 
+				- DevicesScan.java (Original version named DeviceScanActivity.java)
+				- BluetoothLeDevice.java (Original version named BluetoothLeService.java)
+		- AltBeacon, Copyright 2014 Radius Networks
+		- Apache Commons IO, Copyright © 2002-2016 The Apache Software Foundation. All Rights Reserved.
+---------------------------------------------------------------------------------------------------

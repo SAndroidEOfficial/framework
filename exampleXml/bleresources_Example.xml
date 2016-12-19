@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<bleresources>
+	<bleresource>
+		<devname>alarm</devname>
+		<devtype>TI BLE Keyfob</devtype>
+		<devversion></devversion>
+		<devmacaddress>54:4A:16:5E:1D:16</devmacaddress>
+		<devItem>key_button_2</devItem>
+		<type>ble_button</type>
+		<cardinality>2</cardinality>
+		<name>alarm_key_button_2</name>
+	</bleresource>
+	<bleresource>
+		<devname>alarm</devname>
+		<devtype>TI BLE Keyfob</devtype>
+		<devversion></devversion>
+		<devmacaddress>54:4A:16:5E:1D:16</devmacaddress>
+		<devItem>key_accelerometer</devItem>
+		<type>ble_accelerometer</type>
+		<cardinality>1</cardinality>
+		<name>alarm_key_accelerometer</name>
+	</bleresource>
+	<bleresource>
+		<devname>alarm</devname>
+		<devtype>TI BLE Keyfob</devtype>
+		<devversion></devversion>
+		<devmacaddress>54:4A:16:5E:1D:16</devmacaddress>
+		<devItem>key_button_1</devItem>
+		<type>ble_button</type>
+		<cardinality>1</cardinality>
+		<name>alarm_key_button_1</name>
+	</bleresource>
+	<bleresource>
+		<devname>alarm</devname>
+		<devtype>TI BLE Keyfob</devtype>
+		<devversion></devversion>
+		<devmacaddress>54:4A:16:5E:1D:16</devmacaddress>
+		<devItem>key_battery</devItem>
+		<type>ble_battery</type>
+		<cardinality>1</cardinality>
+		<name>alarm_key_battery</name>
+	</bleresource>
+	<bleresource>
+		<devname>alarm</devname>
+		<devtype>TI BLE Keyfob</devtype>
+		<devversion></devversion>
+		<devmacaddress>54:4A:16:5E:1D:16</devmacaddress>
+		<devItem>key_alarm</devItem>
+		<type>ble_alarm</type>
+		<cardinality>1</cardinality>
+		<name>alarm_key_alarm</name>
+	</bleresource>
+</bleresources>

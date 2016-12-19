@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+        <RelativeLayout
+            android:id="@+id/buttonPanel"
+            android:layout_width="fill_parent"
+            android:layout_height="222dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="0.19">
+
+
+            <Button
+            android:id="@+id/buttonWrite"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
+
+
+            android:text="write on flash memory"
+            android:layout_alignBaseline="@+id/buttonShowResources"
+            android:layout_alignBottom="@+id/buttonShowResources"
+            android:layout_centerHorizontal="true" />
+        
+            
+        <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="221dp"
+        android:layout_height="wrap_content"
+            android:text="scan for discoverable devices"
+            android:layout_alignBottom="@+id/buttonWrite"
+            android:layout_alignStart="@+id/buttonWrite" />
+
+            <Button
+            android:id="@+id/buttonShowResources"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
+            android:text="show stored resources"
+
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/buttonWrite" />
+
+
+        </RelativeLayout>
+
+    <RelativeLayout
+    android:id="@+id/loadingPanel"
+    android:layout_width="fill_parent"
+    android:layout_height="175dp"
+    android:gravity="center" >
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/buttonErase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="erase flash memory"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="0.19" />
+
+
+</LinearLayout>

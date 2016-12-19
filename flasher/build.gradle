@@ -1,0 +1,69 @@
+apply plugin: 'com.android.application'
+
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.2"
+
+        defaultConfig {
+            applicationId "com.angelo.bleembeddedflasher"
+            minSdkVersion 19
+            targetSdkVersion 23
+            versionCode 1
+            versionName "1.0"
+            multiDexEnabled true
+        }
+
+        sourceSets {
+            main {
+                jniLibs.srcDirs = ['native-libs']
+                jni.srcDirs = [] //disable automatic ndk-build
+            }
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
+
+
+        packagingOptions {
+            //exclude 'META-INF/maven/org.apache.commons/commons-jexl/pom.xml'
+            //exclude 'META-INF/services/javax.script.ScriptEngineFactory'
+            //exclude 'META-INF/maven/org.apache.commons/commons-jexl/pom.properties'
+        }
+
+    }
+
+//
+//task copyJniLibs(type: Copy) {
+//    from 'libs/armeabi'
+//    into 'src/main/jniLibs/armeabi'
+//}
+//tasks.withType(JavaCompile) {
+//    compileTask -> compileTask.dependsOn(copyJniLibs)
+//}
+//clean.dependsOn 'cleanCopyJniLibs'
+
+
+allprojects{
+    repositories{
+        jcenter()
+        flatDir{
+            dirs 'libs'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile project(':library')
+    //compile(name:"SAndroidE", ext:"aar")
+    //compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile(name:"usbSerialForAndroid", ext:"aar")
+    compile(name:"intelhex-parser", ext:"aar")
+
+    //compile 'org.altbeacon:android-beacon-library:2.8.1'
+}

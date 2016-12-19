@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<parsers>
+
+		<!-- if parser layout is defined the other fields, but the 'data' and 'parser_id'  are ignored.
+		Precisely the data field attributes won't be ignored, but the position.
+		Be careful using 'parser_layout' and 'data' field together: the position of
+		data in this file and in the 'parser_layout' shall be the same-->
+		<main_layout>
+			<parser_id>EDDY_UID</parser_id>
+			<matching_bytes>
+				<position>2-2</position>
+				<value>00</value>
+			</matching_bytes>
+			<service_uuid>
+				<position>0-1</position>
+				<value>feaa</value>
+			</service_uuid>
+			<beacon_id>
+				<position>4-13</position>
+			</beacon_id>
+			<beacon_id>
+				<position>14-19</position>
+			</beacon_id>
+			<power>
+				<position>3-3</position>
+				<offset>-41</offset>
+			</power>
+		</main_layout>
+		<extra_layout>
+			<matching_bytes>
+				<position>2-2</position>
+				<value>20</value>
+			</matching_bytes>
+			<service_uuid>
+				<position>0-1</position>
+			</service_uuid>
+			<data>
+				<position>3-3</position>
+				<type>version</type>
+			</data>
+			<data>
+				<position>4-5</position>
+				<sensor>
+					<type>battery</type>
+					<description>battery voltage info</description>
+					<accuracy></accuracy>
+					<drift></drift>
+					<measurementRange>0-3</measurementRange>
+					<precision>0.1</precision>
+					<unit>V</unit>
+				</sensor>
+			</data>
+			<data>
+				<position>6-7</position>
+				<sensor>
+					<type>temperature</type>
+					<unit>°C</unit>
+				</sensor>
+			</data>
+			<data>
+				<position>8-11</position>
+				<sensor>
+					<type>counter</type>
+					<description>number of packets sent</description>
+				</sensor>
+			</data>
+			<data>
+				<position>12-15</position>
+				<sensor>
+					<type>timer</type>
+					<description>beacon uptime</description>
+					<unit>s</unit>
+				</sensor>
+			</data>
+		</extra_layout>
+	</parser>
+	<parser>
+		<main_layout>
+			<parser_id>I_BEACON</parser_id>
+			<parser_layout>m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24</parser_layout>
+		</main_layout>
+	</parser>
+</parsers>

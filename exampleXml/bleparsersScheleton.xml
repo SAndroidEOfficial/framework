@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<parsers>
+	<parser>
+<!-- 		if parser layout is defined the other fields, but the 'data' and 'parser_id'  are ignored.
+		Precisely the data field attributes won't be ignored, but the position. -->
+		<parser_layout></parser_layout>
+		<parser_id></parser_id>
+		<manufacturer>
+			<position></position>
+			<value></value>
+		</manufacturer>
+		<service_uuid>
+			<position></position>
+			<value></value>
+		</service_uuid>
+		<beacon_id>
+			<position></position>
+		</beacon_id>
+		<beacon_id>
+			<position></position>
+		</beacon_id>
+		<power>
+			<position></position>
+		</power>
+		<data>
+			<position></position>
+			<type></type>
+		</data>
+	</parser>
+
+	<parser>
+		<parser_id></parser_id>
+		<extra_layout></extra_layout>
+		<manufacturer>
+			<position></position>
+			<value></value>
+		</manufacturer>
+		<service_uuid>
+			<position></position>
+			<value></value>
+		</service_uuid>
+		<beacon_id>
+			<position></position>
+		</beacon_id>
+		<beacon_id>
+			<position></position>
+		</beacon_id>
+		<power>
+			<position></position>
+		</power>
+		<data>
+			<position></position>
+			<sensor>
+				<type></type>
+				<description></description>
+				<accuracy></accuracy>
+				<drift></drift>
+				<measurementRange></measurementRange>
+				<measurementFrequency></measurementFrequency>
+				<measurementLatency></measurementLatency>
+				<precision></precision>
+				<resolution></resolution>
+				<responseTime></responseTime>
+				<selectivity></selectivity>
+				<detectionLimit></detectionLimit>
+				<sampleRate></sampleRate>
+				<condition></condition>
+				<unit></unit>
+			</sensor>
+		</data>
+	</parser>
+</parsers>
