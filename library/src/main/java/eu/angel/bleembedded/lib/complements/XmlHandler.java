@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import eu.angel.bleembedded.lib.BLEContext;
@@ -282,6 +283,36 @@ public class XmlHandler {
             bleresources.add(bleresource);
         saveBleresources(context, bleresources);
     }
+
+    public static void renameDevice
+            (Context context, String from, String to) throws IOException, SAXException
+    {
+        List<Bleresource> existingResources=parseBLEResources(context);
+        HashMap<String,List<Bleresource>> mymap = new HashMap<String,List<Bleresource>>();
+        String old;
+        for (Bleresource bleresource:existingResources) {
+            old = bleresource.getDevname();
+            if (from.equals(old)) {
+                old = to;
+                bleresource.setDevname(to);
+            }
+
+            if (!mymap.containsKey(old)) {
+                mymap.put(old,new ArrayList<Bleresource>());
+            }
+
+            mymap.get(old).add(bleresource);
+        }
+        List<Bleresource> newBleresources = new ArrayList<Bleresource>();
+        for (List<Bleresource> l:mymap.values()) {
+            for (Bleresource bleresource:l) {
+                newBleresources.add(bleresource);
+            }
+        }
+
+        saveBleresources(context, newBleresources);
+    }
+
 
     public static void flushResources(Context context) throws IOException, SAXException
     {

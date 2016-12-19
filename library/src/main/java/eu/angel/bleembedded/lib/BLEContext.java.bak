@@ -45,9 +45,6 @@ import eu.angel.bleembedded.lib.item.button.BLEButton;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIO;
 import eu.angel.bleembedded.lib.item.sensor.BLESensor;
 import eu.angel.bleembedded.lib.item.sensor.BLESensorManager;
-import io.flic.lib.FlicButton;
-import io.flic.lib.FlicManager;
-import io.flic.lib.FlicManagerInitializedCallback;
 
 /**
  * Class which exposes resources of the library.
@@ -88,8 +85,6 @@ public class BLEContext {
 	public static Context context;
 	private static BLEEmbeddedEventListener bleEmbeddedEventListener;
 
-	public static FlicManager flicManager;
-	public static boolean flicInitialized=false;
 
 	/**
 	 * Return the Object representing the resource pointed by the id. It is used for {@link BLEButton}
@@ -104,26 +99,13 @@ public class BLEContext {
 		return findViewById(bleresource);
 	}
 
-	public static void startFlicManager() {
-		if (!flicInitialized) {
-			flicInitialized=true;
-			FlicManager.setAppCredentials("sandroide", "sandroide", "SAndroidE");
-			FlicManager.getInstance(context, new FlicManagerInitializedCallback() {
-				@Override
-				public void onInitialized(FlicManager manager) {
-					Log.d(TAG, "FlicManager initialized");
-					BLEContext.flicManager = manager;
-
-					for(BLEItem item : mbleItems){
-						if (item.getType()==BLEItem.TYPE_BUTTON) {
-							((BLEButton) item).onFlicManagerInitialized();
-						}
-					}
-				}
-			});
-		}
-	}
-
+	/**
+	 * Return the Object representing the resource pointed by the id. It is used for {@link BLEButton}
+	 * and {@link BLEGeneralIO}.
+	 *
+	 * @param bleresource the {@link Bleresource}.
+	 *
+	 */
 	public static Object findViewById(Bleresource bleresource)
 	{
 		if (bleresource!=null)
@@ -131,10 +113,6 @@ public class BLEContext {
 			switch (bleresource.getType())
 			{
 				case BLEItemDescriptor.ble_button:
-					 // if flic then start flicmanager
-					if ("FlicButton".equalsIgnoreCase(bleresource.getDevtype()))
-						startFlicManager();
-
 					return getItem(BLEItem.TYPE_BUTTON,
 							bleresource.getDevtype(), bleresource.getCardinality(), bleresource);
 

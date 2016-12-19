@@ -2,16 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:weightSum="1">
 
         <RelativeLayout
             android:id="@+id/buttonPanel"
             android:layout_width="fill_parent"
             android:layout_height="222dp"
             android:orientation="vertical"
-            android:gravity="center" >
+            android:gravity="center"
+            android:layout_weight="0.34">
 
-    <Button
+            <Button
+            android:id="@+id/buttonShowResources"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
+            android:text="show stored resources"
+                android:layout_above="@+id/buttonErase"
+                android:layout_alignStart="@+id/buttonErase" />
+
+            <Button
         android:id="@+id/buttonErase"
         android:layout_width="221dp"
         android:layout_height="wrap_content"
@@ -25,25 +35,25 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/buttonScan"
             android:layout_alignParentLeft="true"
-
-
             android:text="write on flash memory" />
-        
-            
-        <Button
+
+
+            <Button
         android:id="@+id/buttonScan"
         android:layout_width="221dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="scan for discoverable devices" />
+        android:text="scan for discoverable devices"
+                android:layout_above="@+id/buttonGrabFlic"
+                android:layout_alignStart="@+id/buttonGrabFlic" />
+
 
             <Button
-            android:id="@+id/buttonShowResources"
-            android:layout_width="221dp"
-            android:layout_height="wrap_content"
-            android:text="show stored resources"
-                android:layout_above="@+id/buttonErase"
-                android:layout_alignStart="@+id/buttonErase" />
+                android:id="@+id/buttonGrabFlic"
+                android:layout_width="221dp"
+                android:layout_height="wrap_content"
+                android:text="Grab Flic Button"
+                android:layout_alignParentBottom="true"
+                android:onClick="grabButton" />
 
 
         </RelativeLayout>

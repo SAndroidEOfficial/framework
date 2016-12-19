@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.angelo.bleembeddedflasher.ble.ResourcesActivity;
@@ -41,17 +42,31 @@ import com.angelo.bleembeddedflasher.flashers.MasterFlasher;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import org.xml.sax.SAXException;
+
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.complements.XmlHandler;
+import eu.angel.bleembedded.lib.device.DevicesDescriptorNew;
+import eu.angel.bleembedded.lib.device.GattAttributesComplements;
+import eu.angel.bleembedded.lib.item.BleResourcesHandler;
+import eu.angel.bleembedded.lib.item.Bleresource;
+import io.flic.lib.FlicButton;
+import io.flic.lib.FlicManager;
+import io.flic.lib.FlicManagerInitializedCallback;
 
 
 public class MainActivity extends RootActivity {
@@ -189,25 +204,102 @@ public class MainActivity extends RootActivity {
 				}
 		  }
 		  //////////////////////////////
-      
+
+		BLEContext.startFlicManager();
     }
-	
+
+	public void grabButton(View v) {
+		if (BLEContext.flicManager != null) {
+			BLEContext.flicManager.initiateGrabButton(this);
+		}
+	}
+
 	 @Override
 	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  switch(requestCode){
-	  case PICKFILE_RESULT_CODE:
-	   if(resultCode==RESULT_OK){
-	    final String file_path = data.getData().getPath();
-		 new Thread(new Runnable() { public void run() {
-			 masterFlasher.write(context, file_path);
-			 } }).start();
-	   }
-	   break;
+		  case PICKFILE_RESULT_CODE:
+		   if(resultCode==RESULT_OK){
+			final String file_path = data.getData().getPath();
+			 new Thread(new Runnable() { public void run() {
+				 masterFlasher.write(context, file_path);
+				 } }).start();
+		   }
+		   break;
+		  case FlicManager.GRAB_BUTTON_REQUEST_CODE:
+			  if (BLEContext.flicManager != null) {
+				  final FlicButton button = BLEContext.flicManager.completeGrabButton(requestCode, resultCode, data);
+				  if (button != null) {
+					  Log.d(TAG, "Got a button: " + button);
+
+					  // chiedo il nome da dare al device prima di salvarlo
+					  AlertDialog.Builder builder = new AlertDialog.Builder(
+							  MainActivity.this);
+					  final EditText et = new EditText(MainActivity.this);
+					  //et.setOnClickListener(DeviceControlActivity.this);
+					  et.requestFocus();
+					  builder.setMessage(R.string.Enter_a_specific_name_for_the_selected_Device)
+							  .setTitle(R.string.Device_name)
+							  .setPositiveButton(R.string.Ok, new DialogInterface.OnClickListener() {
+								  @Override
+								  public void onClick(DialogInterface dlg, int which) {
+									  String input = et.getText().toString();
+									  try {
+										  if (input == null || input.trim().length() == 0) throw new ToastException(context.getString(R.string.resource_name_cannot_be_left_blank));
+
+										  dlg.dismiss();
+										  DevicesDescriptorNew devicesDescriptorNew = DevicesDescriptorNew.getDeviceDescriptorByName("FlicButton", null);
+										  if (devicesDescriptorNew == null) throw new ToastException("\"flic\" device descriptor not found in bleresources.xml");
+
+										  // creo nuova risorsa in bleresources.xml
+										  List<Bleresource> bleresources=new ArrayList<>();
+										  String devItem = "flicbutton";
+
+										  Bleresource.Builder bleresourceBuilder=new Bleresource.Builder();
+										  bleresourceBuilder.setDevname(input);
+										  bleresourceBuilder.setDevtype(devicesDescriptorNew.getDeviceType());
+										  bleresourceBuilder.setDevversion("");
+										  bleresourceBuilder.setDevmacaddress(button.mac);
+										  bleresourceBuilder.setType(GattAttributesComplements.getItemTypeFromDevItem(devicesDescriptorNew, devItem));
+										  bleresourceBuilder.setDevItem(devItem);
+										  bleresourceBuilder.setCardinality(GattAttributesComplements.getDevItemCardinality(devicesDescriptorNew, devItem));
+										  bleresourceBuilder.setName(input+"_"+devItem);
+										  bleresources.add(bleresourceBuilder.build());
+
+										  try {
+											  XmlHandler.saveAndAppendBleresources(context, bleresources);
+										  } catch (FileNotFoundException e) {
+											  //TODO: evaluate whether throwing exception
+											  e.printStackTrace();
+										  } catch (SAXException e) {
+											  e.printStackTrace();
+										  } catch (IOException e) {
+											  e.printStackTrace();
+										  }
+
+										  //BleResourcesHandler.storeAllDevResources2(context, input, devicesDescriptorNew, "", button.mac, null);
+										  throw new ToastException(context.getString(R.string.device_attributes_stored));
+
+									  } catch (ToastException ex) {
+										  Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
+									  }
+								  }
+							  })
+							  .setNegativeButton(R.string.Cancel,  new DialogInterface.OnClickListener() {
+								  @Override
+								  public void onClick(DialogInterface dlg, int which) {
+									  dlg.dismiss();
+								  }
+							  })
+							  .setView(et)
+							  .create().show();
+				  }
+			  }
+			  break;
 	   
 	  }
 	 }
-	 
-	 
+
+
 	 FlasherTaskEventListener flasherTaskEventListener = new FlasherTaskEventListener()
 	 {
 

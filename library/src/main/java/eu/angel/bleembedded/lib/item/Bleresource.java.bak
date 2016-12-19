@@ -108,11 +108,6 @@ public class Bleresource {
         return name;
     }
 
-    public void setDevname(String str) {
-        this.devname = str;
-        this.name = this.devname+"_"+this.devItem;
-    }
-
     @Override
     public String toString() {
         return startOfline+devmacaddress+endOfField+devname+endOfField+

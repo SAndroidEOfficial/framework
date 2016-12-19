@@ -23,15 +23,10 @@
  */
 package eu.angel.bleembedded.lib.item.button;
 
-import eu.angel.bleembedded.lib.BLEContext;
 import eu.angel.bleembedded.lib.data.BLEDeviceData;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.BLEOnItemUpdateListener;
 import eu.angel.bleembedded.lib.item.Bleresource;
-import io.flic.lib.FlicButton;
-import io.flic.lib.FlicButtonCallback;
-import io.flic.lib.FlicButtonCallbackFlags;
-
 
 /**
  * The class which implements the BLEButton resources.
@@ -85,6 +80,7 @@ public class BLEButton extends BLEItem{
 	public void setOnClickListener(BLEOnClickListener mBleOnClickListener)
 	{
 		this.mBleOnClickListener=mBleOnClickListener;
+		onClickListenerCalled=true;
 		initOnClickListener();
 	}
 
@@ -93,40 +89,14 @@ public class BLEButton extends BLEItem{
 	 */
 	void initOnClickListener()
 	{
-		onClickListenerCalled=true;
-		// search mac address in flicmanager knownbuttons and then assign this callback to him
-		if ( "FlicButton".equalsIgnoreCase(bleresource.getDevtype())) {
-			if (BLEContext.flicManager!=null) {
-				FlicButton button = BLEContext.flicManager.addToKnownButtons(bleresource.getDevmacaddress());
-				//FlicButton button = BLEContext.flicManager.getButtonByDeviceId(mac);
-				if (button != null) {
-					button.removeAllFlicButtonCallbacks();
-					button.addFlicButtonCallback(new FlicButtonCallback() {
-						@Override
-						public void onButtonUpOrDown(FlicButton button, boolean wasQueued, int timeDiff, boolean isUp, boolean isDown) {
-							if (isUp) mBleOnClickListener.onClick(BLEButton.this);
-						}
-
-						/*  Implementando click or double click non funziona!!!
-						@Override
-						public void onButtonSingleOrDoubleClick(String mac, boolean wasQueued, int timeDiff, int action) {
-							mBleOnClickListener.onClick(BLEButton.this);
-						}*/
-
-					});
-					button.setFlicButtonCallbackFlags(FlicButtonCallbackFlags.UP_OR_DOWN);
-					//button.setFlicButtonCallbackFlags(FlicButtonCallbackFlags.CLICK_OR_DOUBLE_CLICK);
-					button.setActiveMode(true);
-				}
+		if (mDeviceControl!=null){
+		setBleItemListeners(new BLEOnItemUpdateListener() {
+			@Override
+			public void onItemUpdate(BLEDeviceData[] data) {
+				if (data[0].getValue()==1)
+					mBleOnClickListener.onClick(BLEButton.this);
 			}
-		} else if (mDeviceControl!=null) {
-			setBleItemListeners(new BLEOnItemUpdateListener() {
-				@Override
-				public void onItemUpdate(BLEDeviceData[] data) {
-					if (data[0].getValue()==1)
-						mBleOnClickListener.onClick(BLEButton.this);
-				}
-			}, null);
+		}, null);
 			initItem();
 
 		}
@@ -154,10 +124,7 @@ public class BLEButton extends BLEItem{
 	public void initDeviceControl()
 	{
 		super.initDeviceControl();
-		if (onClickListenerCalled) initOnClickListener();
-	}
-
-	public void onFlicManagerInitialized(){
-		if (onClickListenerCalled) initOnClickListener();
+		if (onClickListenerCalled)
+			initOnClickListener();
 	}
 }

@@ -33,6 +33,13 @@ public class RootActivity extends Activity{
 
     private static ArrayList<Activity> activities=new ArrayList<>();
 
+    public class ToastException extends Exception {
+
+        public ToastException(String message){
+            super(message);
+        }
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)

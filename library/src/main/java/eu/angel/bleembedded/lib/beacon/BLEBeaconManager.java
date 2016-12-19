@@ -410,14 +410,6 @@ public class BLEBeaconManager {
         }
     }
 
-
-    /**
-     * Delete the {@link BLEBeaconCluster} stored in the xml file
-     */
-    public void deleteBeaconClusters() throws IOException, SAXException {
-        XmlHandler.flushBleBeaconClusters(BLEContext.context);
-    }
-
     /**
      * Stops the cluster configuration. Ending the configuration sets free
      * the services used to acquire the beacons

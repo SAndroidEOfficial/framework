@@ -57,13 +57,13 @@ allprojects{
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile project(':library')
     //compile(name:"SAndroidE", ext:"aar")
     //compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile(name:"usbSerialForAndroid", ext:"aar")
-    compile(name:"intelhex-parser", ext:"aar")
-
+    compile(name: "usbSerialForAndroid", ext: "aar")
+    compile(name: "intelhex-parser", ext: "aar")
     //compile 'org.altbeacon:android-beacon-library:2.8.1'
+    compile project(':fliclib')
 }
