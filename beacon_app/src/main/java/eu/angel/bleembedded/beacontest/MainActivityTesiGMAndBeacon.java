@@ -42,6 +42,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.alarm.BLEAlarm;
 import eu.angel.bleembedded.lib.beacon.BLEBeaconCluster;
@@ -56,7 +57,7 @@ import eu.angel.bleembedded.lib.item.generalIO.BLEOnGeneralIOEventListener;
 
 
 @SuppressLint({ "NewApi", "ServiceCast" })
-public class MainActivityTesiGMAndBeacon extends Activity {
+public class MainActivityTesiGMAndBeacon extends SandroideBaseActivity {
 	
 	
 	protected static final String TAG = "MainActivityTesiGM";
@@ -159,7 +160,6 @@ public class MainActivityTesiGMAndBeacon extends Activity {
 			tvAnalog2.setText("MAN MODE");
 		}
 
-		BLEContext.initBLE(this);
         //context=this;
 
 

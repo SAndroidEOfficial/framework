@@ -22,12 +22,13 @@ import android.widget.TextView;
 
 import eu.angel.bleembedded.R;
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIO;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIOEvent;
 import eu.angel.bleembedded.lib.item.generalIO.BLEOnGeneralIOEventListener;
 
 
-public class MainActivityNano extends Activity {
+public class MainActivityNano extends SandroideBaseActivity {
 
 	protected static final String TAG = "MainActivity";
 
@@ -50,175 +51,179 @@ public class MainActivityNano extends Activity {
 		nanoButton = (BLEGeneralIO) BLEContext.findViewById("nano_rbs_general_io_15");
 		nanoTrimmer = (BLEGeneralIO) BLEContext.findViewById("nano_rbs_general_io_4");
 
-		nanoTrimmer.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
-			@Override
-			public void onBoardInitEnded() {
-				nanoTrimmer.setStatus(BLEGeneralIO.GENERAL_IO_AI);
-			}
+		if (nanoTrimmer!=null) {
+			nanoTrimmer.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
+				@Override
+				public void onBoardInitEnded() {
+					nanoTrimmer.setStatus(BLEGeneralIO.GENERAL_IO_AI);
+				}
 
-			@Override
-			public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
 
-			@Override
-			public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-				Log.d(TAG, "analog value changing: "+ bleGeneralIOEvent.values[1]);
-				final float val = bleGeneralIOEvent.values[1];
-				(MainActivityNano.this).runOnUiThread(new Runnable() {
-														  @Override
-														  public void run() {
-															  tvTrimmer.setText(""+Math.round(val*100)/(float)100);
-														  }
-													  }
-				);
-			}
-
-			@Override
-			public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-		});
-
-
-
-		nanoLed.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
-			@Override
-			public void onBoardInitEnded() {
-				nanoLed.setStatus(BLEGeneralIO.GENERAL_IO_DO);
-			}
-
-			@Override
-			public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-			}
-
-			@Override
-			public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-			}
-
-			@Override
-			public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-				final float val = bleGeneralIOEvent.values[1];
-				(MainActivityNano.this).runOnUiThread(new Runnable() {
-														  @Override
-														  public void run() {
-															  tvLed.setText(val==1?"Led ON":"Led OFF");
-															  tvLed.setTextColor(val==1? Color.BLUE:Color.BLACK);
-														  }
-													  }
-				);
-			}
-
-			@Override
-			public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-
-			@Override
-			public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
-
-			}
-		});
-
-		nanoButton.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
-			@Override
-			public void onBoardInitEnded() {
-				nanoButton.setStatus(BLEGeneralIO.GENERAL_IO_DI);
-			}
-
-			@Override
-			public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
-				Log.d(TAG, "button pressing: "+ bleGeneralIOEvent.values[1]);
-				if(bleGeneralIOEvent.values[1]==1)
-				{
-					Log.d(TAG, "led: setting HIGH");
-					nanoLed.setDigitalValueHigh(true);
+				@Override
+				public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+					Log.d(TAG, "analog value changing: " + bleGeneralIOEvent.values[1]);
+					final float val = bleGeneralIOEvent.values[1];
 					(MainActivityNano.this).runOnUiThread(new Runnable() {
 															  @Override
 															  public void run() {
-																  tvButton.setText("Button PRESSED");
-																  tvButton.setTextColor(Color.BLUE);
-																  //tvLed.setText("Led ON");
-																  //tvLed.setTextColor(Color.BLUE);
-															  }
-														  }
-					);
-				} else {
-					Log.d(TAG, "led: setting LOW");
-					nanoLed.setDigitalValueHigh(false);
-					(MainActivityNano.this).runOnUiThread(new Runnable() {
-															  @Override
-															  public void run() {
-																  tvButton.setText("Button not pressed");
-																  tvButton.setTextColor(Color.BLACK);
-																  //tvLed.setText("Led OFF");
-																  //tvLed.setTextColor(Color.BLACK);
+																  tvTrimmer.setText("" + Math.round(val * 100) / (float) 100);
 															  }
 														  }
 					);
 				}
-			}
 
-			@Override
-			public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
 
-			@Override
-			public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
 
-			@Override
-			public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
 
-			@Override
-			public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
 
-			@Override
-			public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				@Override
+				public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
+				}
+			});
+		}
 
-			@Override
-			public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
 
-			}
-		});
+		if (nanoLed!=null) {
+			nanoLed.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
+				@Override
+				public void onBoardInitEnded() {
+					nanoLed.setStatus(BLEGeneralIO.GENERAL_IO_DO);
+				}
+
+				@Override
+				public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				}
+
+				@Override
+				public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+				}
+
+				@Override
+				public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+					final float val = bleGeneralIOEvent.values[1];
+					(MainActivityNano.this).runOnUiThread(new Runnable() {
+															  @Override
+															  public void run() {
+																  tvLed.setText(val == 1 ? "Led ON" : "Led OFF");
+																  tvLed.setTextColor(val == 1 ? Color.BLUE : Color.BLACK);
+															  }
+														  }
+					);
+				}
+
+				@Override
+				public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+			});
+		}
+
+		if (nanoButton!=null) {
+			nanoButton.setOnGeneralIOEventListener(new BLEOnGeneralIOEventListener() {
+				@Override
+				public void onBoardInitEnded() {
+					nanoButton.setStatus(BLEGeneralIO.GENERAL_IO_DI);
+				}
+
+				@Override
+				public void onDigitalInputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+					Log.d(TAG, "button pressing: " + bleGeneralIOEvent.values[1]);
+					if (bleGeneralIOEvent.values[1] == 1) {
+						Log.d(TAG, "led: setting HIGH");
+						nanoLed.setDigitalValueHigh(true);
+						(MainActivityNano.this).runOnUiThread(new Runnable() {
+																  @Override
+																  public void run() {
+																	  tvButton.setText("Button PRESSED");
+																	  tvButton.setTextColor(Color.BLUE);
+																	  //tvLed.setText("Led ON");
+																	  //tvLed.setTextColor(Color.BLUE);
+																  }
+															  }
+						);
+					} else {
+						Log.d(TAG, "led: setting LOW");
+						nanoLed.setDigitalValueHigh(false);
+						(MainActivityNano.this).runOnUiThread(new Runnable() {
+																  @Override
+																  public void run() {
+																	  tvButton.setText("Button not pressed");
+																	  tvButton.setTextColor(Color.BLACK);
+																	  //tvLed.setText("Led OFF");
+																	  //tvLed.setTextColor(Color.BLACK);
+																  }
+															  }
+						);
+					}
+				}
+
+				@Override
+				public void onAnalogValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onDigitalOutputValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onServoValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onPWMValueChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onGeneralIOStatusChanged(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+
+				@Override
+				public void onSetGeneralIOParameter(BLEGeneralIOEvent bleGeneralIOEvent) {
+
+				}
+			});
+		}
 
 	}
 

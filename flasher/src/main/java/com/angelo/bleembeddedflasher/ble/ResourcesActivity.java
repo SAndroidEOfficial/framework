@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import eu.angel.bleembedded.lib.BLEContext;
 import eu.angel.bleembedded.lib.complements.XmlHandler;
 import eu.angel.bleembedded.lib.device.DevicesDescriptorNew;
 import eu.angel.bleembedded.lib.device.GattAttributesComplements;
@@ -180,12 +181,13 @@ public class ResourcesActivity extends RootActivity implements View.OnClickListe
                 new ArrayList<HashMap<String, String>>();
         List<Bleresource>bleresources= BleResourcesHandler.getAllDevResources(this);
 
-        if (bleresources.size()==0)
+        /*if (bleresources.size()==0)
         {
             Toast.makeText(this, R.string.no_resources_found, Toast.LENGTH_LONG).show();
             finish();
         }else
-        {
+        {*/
+            BLEContext.displayToastOnMainActivity(String.format("%d resources loaded from bleresources.xml",bleresources.size()));
             ArrayList<ArrayList<HashMap<String, String>>> resourcesDescriptions
                     = new ArrayList<ArrayList<HashMap<String, String>>>();
             for (Bleresource bleresource:bleresources)
@@ -230,7 +232,7 @@ public class ResourcesActivity extends RootActivity implements View.OnClickListe
                     new int[] { android.R.id.text1, android.R.id.text2 }
             );
             mResourcesList.setAdapter(simpleAdapter);
-        }
+        //}
 
     }
 

@@ -48,5 +48,8 @@
     <string name="confirmation">Are you sure to delete all stored resources?</string>
     <string name="services_not_found_yet">service not found yet</string>
 
+    <!--Exception messages-->
+    <string name="flic_app_not_installed">Flic app is not installed. Flic devices won\'t work until Flic app installation. Please install the app "io.flic.app" from Google Play Store.</string>
+
 
 </resources>

@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIO;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIOEvent;
@@ -61,7 +63,7 @@ import eu.angel.bleembedded.R;
 
 
 @SuppressLint({ "NewApi", "ServiceCast" })
-public class MainActivity extends Activity implements BLESensorEventListener, BLEOnClickListener {
+public class MainActivity extends SandroideBaseActivity implements BLESensorEventListener, BLEOnClickListener {
 	
 	
 	protected static final String TAG = "MainActivity";

@@ -69,23 +69,19 @@ public class XmlHandler {
     public static List<Bleresource> parseBLEResources(Context context) {
 
         List<Bleresource> bleresources = new ArrayList<>();
-        //Bleresource bleresource=new Bleresource();
-        Bleresource.Builder bleresourceBuilder=new Bleresource.Builder();
-        String text="";
-        Uri uri = Uri.parse("content://com.angelo.bleembeddedflasher.fileprovider/bleresources.xml");
-        InputStream is= null;
         try {
+            //Bleresource bleresource=new Bleresource();
+            Bleresource.Builder bleresourceBuilder=new Bleresource.Builder();
+            String text="";
+            Uri uri = Uri.parse("content://com.angelo.bleembeddedflasher.fileprovider/bleresources.xml");
+            InputStream is= null;
+
             is = context.getContentResolver().openInputStream(uri);
             Log.d(TAG, is.toString());
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.v("WriteFile","file created");
+            XmlPullParserFactory factory = null;
+            XmlPullParser parser = null;
 
-        XmlPullParserFactory factory = null;
-        XmlPullParser parser = null;
-        try {
             factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             parser = factory.newPullParser();
@@ -148,10 +144,14 @@ public class XmlHandler {
                 eventType = parser.next();
             }
 
+        } catch (FileNotFoundException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         } catch (XmlPullParserException e) {
-            Log.d(TAG, "Text is: "+text);
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         }
 
@@ -162,17 +162,13 @@ public class XmlHandler {
     public static void saveBleresources
             (Context context, List<Bleresource> bleresources) throws IOException, SAXException {
 
-        //For debug purposes
-//        File f = new File(Environment.getExternalStorageDirectory(),"bleresources.xml");
-//        FileOutputStream myFile = new FileOutputStream(f);
-
         //TODO:should be handled by ContentProvider
-        Uri uri = Uri.parse
-                ("content://com.angelo.bleembeddedflasher.fileprovider/bleresources.xml");
-        FileOutputStream myFile=
-                (FileOutputStream) context.getContentResolver().openOutputStream(uri);
-        //TODO: add subsection "device" and "Item" in "bleresource"
         try{
+            Uri uri = Uri.parse
+                    ("content://com.angelo.bleembeddedflasher.fileprovider/bleresources.xml");
+            FileOutputStream myFile=
+                    (FileOutputStream) context.getContentResolver().openOutputStream(uri);
+            //TODO: add subsection "device" and "Item" in "bleresource"
 
             XmlSerializer xmlSerializer = Xml.newSerializer();
             StringWriter writer = new StringWriter();
@@ -267,11 +263,13 @@ public class XmlHandler {
 
         }
         catch (FileNotFoundException e) {
-            System.err.println("FileNotFoundException: " + e.getMessage());
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
             throw new SAXException(e);
 
         } catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -331,39 +329,30 @@ public class XmlHandler {
         final int CLUSTER_PARSING = 3;
 
         List<BLEBeaconCluster> bleBeaconClusters = new ArrayList<>();
-        //List<BLEBeacon> bleBeacons = new ArrayList<>();
-        BLEBeacon.Builder beaconBuilder = new BLEBeacon.Builder();
-        BLEBeaconRegion.Builder beaconRegionbuilder = new BLEBeaconRegion.Builder();
-        List<BLEBeaconRegion> bleBeaconRegions = new ArrayList<>();
-        String bleBeaconClusterUniqueId="";
-        String text="";
-
-        File file = new File(Environment.getExternalStorageDirectory(), "blebeaconclusters.xml");
-//        Uri uri= FileProvider.getUriForFile(context,
-//                "eu.angel.bleembedded.beacontest.blebeaconclusters", file);
-
-//        Uri uri = Uri.parse
-//                //("content://com.angelo.bleembeddedflasher.fileprovider/blebeaconclusters/blebeaconclusters.xml");
-//        ("content://eu.angel.bleembedded.beacontest.fileprovider/blebeaconclusters/blebeaconclusters.xml");
-
-        InputStream is= null;
-        int parsingFirstLayerSection=NONE_PARSING;
-        int parsingSecondLayerSection=NONE_PARSING;
-
 
         try {
+            //List<BLEBeacon> bleBeacons = new ArrayList<>();
+            BLEBeacon.Builder beaconBuilder = new BLEBeacon.Builder();
+            BLEBeaconRegion.Builder beaconRegionbuilder = new BLEBeaconRegion.Builder();
+            List<BLEBeaconRegion> bleBeaconRegions = new ArrayList<>();
+            String bleBeaconClusterUniqueId="";
+            String text="";
+
+            File file = new File(Environment.getExternalStorageDirectory(), "blebeaconclusters.xml");
+
+            InputStream is= null;
+            int parsingFirstLayerSection=NONE_PARSING;
+            int parsingSecondLayerSection=NONE_PARSING;
+
             //is = context.getContentResolver().openInputStream(uri);
             is=new FileInputStream(file);
             Log.d(TAG, is.toString());
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.v("WriteFile","file created");
+            Log.v("WriteFile","file created");
 
-        XmlPullParserFactory factory = null;
-        XmlPullParser parser = null;
-        try {
+            XmlPullParserFactory factory = null;
+            XmlPullParser parser = null;
+
             factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             parser = factory.newPullParser();
@@ -492,10 +481,14 @@ public class XmlHandler {
                 }
                 eventType = parser.next();
             }
+        } catch (FileNotFoundException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         } catch (XmlPullParserException e) {
-            Log.d(TAG, "Text is: "+text);
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         }
 
@@ -506,21 +499,9 @@ public class XmlHandler {
             (Context context, List<BLEBeaconCluster> bleBeaconClusters)
             throws IOException, SAXException {
 
-        //For debug purposes
-//        File f = new File(Environment.getExternalStorageDirectory(),"blebeaconclusters.xml");
-//        FileOutputStream myFile = new FileOutputStream(f);
-
-        File file = new File(Environment.getExternalStorageDirectory(), "blebeaconclusters.xml");
-//        Uri uri= FileProvider.getUriForFile(context,
-//                "eu.angel.bleembedded.beacontest.blebeaconclusters", file);
-
-//        Uri uri = Uri.parse
-//                //("content://com.angelo.bleembeddedflasher.fileprovider/blebeaconclusters/blebeaconclusters.xml");
-//                        ("content://eu.angel.bleembedded.beacontest.fileprovider/blebeaconclusters/blebeaconclusters.xml");
-        FileOutputStream myFile= new FileOutputStream(file);
-                //(FileOutputStream) context.getContentResolver().openOutputStream(uri);
-
         try{
+            File file = new File(Environment.getExternalStorageDirectory(), "blebeaconclusters.xml");
+            FileOutputStream myFile= new FileOutputStream(file);
 
             XmlSerializer xmlSerializer = Xml.newSerializer();
             StringWriter writer = new StringWriter();
@@ -673,11 +654,13 @@ public class XmlHandler {
             myFile.write(writer.toString().getBytes());
         }
         catch (FileNotFoundException e) {
-            System.err.println("FileNotFoundException: " + e.getMessage());
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
             throw new SAXException(e);
 
         } catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         }
     }
 

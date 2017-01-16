@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.complements.XmlHandler;
 import eu.angel.bleembedded.lib.beacon.BLEBeacon;
 import eu.angel.bleembedded.lib.beacon.BLEBeaconManager;
@@ -44,7 +45,7 @@ import eu.angel.bleembedded.lib.beacon.notifier.BLEBeaconBeaconNotifier;
 /**  This is the example activity used to listen the in-range BLE Beacons and to compile the XML description file.
  *  FIXME PAOLO
  */
-public class MainActivityBeacon extends Activity implements View.OnClickListener {
+public class MainActivityBeacon extends SandroideBaseActivity implements View.OnClickListener {
 
     private ListView mList;
     private Button button;
@@ -64,11 +65,8 @@ public class MainActivityBeacon extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_with_list);
 
-        //init the SAndroidE Context
-        BLEContext.initBLE(this);
         // copy the Beacon parsers configuration file from the phone root to the application memory space
         //XmlHandler.saveParserInPrivateMemory(this);
-
         configurationStatus=(TextView) findViewById(R.id.connection_state);
 
 

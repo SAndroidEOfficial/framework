@@ -209,9 +209,16 @@ public class MainActivity extends RootActivity {
     }
 
 	public void grabButton(View v) {
-		if (BLEContext.flicManager != null) {
-			BLEContext.flicManager.initiateGrabButton(this);
+		try {
+			if (!BLEContext.isFlicAppInstalled()) throw new ToastException(context.getString(R.string.flic_app_not_installed));
+			if (BLEContext.flicManager != null) {
+				BLEContext.flicManager.initiateGrabButton(this);
+			}
+		} catch (ToastException ex) {
+			BLEContext.displayToastOnMainActivity(ex.getMessage());
+			//Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
 		}
+
 	}
 
 	 @Override

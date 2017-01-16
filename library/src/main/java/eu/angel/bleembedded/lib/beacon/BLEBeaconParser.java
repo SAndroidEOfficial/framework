@@ -581,39 +581,29 @@ public class BLEBeaconParser {
             int beacon_id_counter=0;
 
             List<BLEBeaconParser> bleBeaconParsers = new ArrayList<>();
-            BLEBeaconParser.Builder parserBuilder = new BLEBeaconParser.Builder();
-            BLEBeaconData.Builder dataBuilder = new BLEBeaconData.Builder();
-
-            String text="";
-
-            File file = new File(Environment.getExternalStorageDirectory(), "bleparsers.xml");
-
-//            Uri uri = Uri.parse
-//                    //("content://com.angelo.bleembeddedflasher.fileprovider/bleparsers/bleparsers.xml");
-//                            ("content://eu.angel.bleembedded.beacontest.fileprovider/bleparsers/bleparsers.xml");
-
-//            Uri uri= FileProvider.getUriForFile(context,
-//                    "eu.angel.bleembedded.beacontest.fileprovider", file);
-            InputStream is= null;
-            int parsingFirstLayerSection=NONE_PARSING;
-            int parsingThirdLayerSection=NONE_PARSING;
-            int parsingFourthLayerSection=NONE_PARSING;
-            int parsingSecondLayerSection=NONE_PARSING;
-
 
             try {
+
+                BLEBeaconParser.Builder parserBuilder = new BLEBeaconParser.Builder();
+                BLEBeaconData.Builder dataBuilder = new BLEBeaconData.Builder();
+
+                String text="";
+
+                File file = new File(Environment.getExternalStorageDirectory(), "bleparsers.xml");
+
+                InputStream is= null;
+                int parsingFirstLayerSection=NONE_PARSING;
+                int parsingThirdLayerSection=NONE_PARSING;
+                int parsingFourthLayerSection=NONE_PARSING;
+                int parsingSecondLayerSection=NONE_PARSING;
+
                 //is = context.getContentResolver().openInputStream(uri);
                 is = new FileInputStream(file);
                 Log.d(TAG, is.toString());
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            Log.v("WriteFile","file created");
+                XmlPullParserFactory factory = null;
+                XmlPullParser parser = null;
 
-            XmlPullParserFactory factory = null;
-            XmlPullParser parser = null;
-            try {
                 factory = XmlPullParserFactory.newInstance();
                 factory.setNamespaceAware(true);
                 parser = factory.newPullParser();
@@ -903,20 +893,16 @@ public class BLEBeaconParser {
                     }
                     eventType = parser.next();
                 }
+                is.close();
+            } catch (FileNotFoundException e) {
+                BLEContext.displayToastOnMainActivity(e.getMessage());
+                e.printStackTrace();
             } catch (XmlPullParserException e) {
-                Log.d(TAG, "Text is: "+text);
+                BLEContext.displayToastOnMainActivity(e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
+                BLEContext.displayToastOnMainActivity(e.getMessage());
                 e.printStackTrace();
-            }
-
-            if (is!=null){
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                is=null;
             }
 
             return bleBeaconParsers;

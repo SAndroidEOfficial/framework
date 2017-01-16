@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import eu.angel.bleembedded.R;
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.alarm.BLEAlarm;
 import eu.angel.bleembedded.lib.item.button.BLEButton;
@@ -47,7 +48,7 @@ import eu.angel.bleembedded.lib.item.sensor.BLESensorManager;
 
 
 @SuppressLint({ "NewApi", "ServiceCast" })
-public class MainActivitybkFlex extends Activity implements BLESensorEventListener, BLEOnClickListener {
+public class MainActivitybkFlex extends SandroideBaseActivity implements BLESensorEventListener, BLEOnClickListener {
 	
 	
 	protected static final String TAG = "MainActivity";

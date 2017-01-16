@@ -40,6 +40,7 @@ import java.util.List;
 
 
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.beacon.BLEBeacon;
 import eu.angel.bleembedded.lib.beacon.BLEBeaconCluster;
 import eu.angel.bleembedded.lib.data.BLEBeaconData;
@@ -47,7 +48,7 @@ import eu.angel.bleembedded.lib.beacon.BLEBeaconManager;
 import eu.angel.bleembedded.lib.beacon.BLEBeaconRegion;
 import eu.angel.bleembedded.lib.beacon.notifier.BLEBeaconRangeNotifier;
 
-public class ListenBeaconActivity extends Activity {
+public class ListenBeaconActivity extends SandroideBaseActivity {
 
     private static final String TAG = "ListenBeaconActivity";
     private ListView mList;
@@ -60,7 +61,6 @@ public class ListenBeaconActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.beacon_list);
 
-        BLEContext.initBLE(this);
         //XmlHandler.saveClusterInPrivateMemory(this);
 
         button=(Button) findViewById(R.id.start_beacon);

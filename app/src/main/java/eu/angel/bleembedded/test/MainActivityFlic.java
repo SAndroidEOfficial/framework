@@ -12,6 +12,7 @@ import java.util.List;
 
 import eu.angel.bleembedded.R;
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.button.BLEButton;
 import eu.angel.bleembedded.lib.item.button.BLEOnClickListener;
@@ -21,7 +22,7 @@ import io.flic.lib.FlicButtonCallbackFlags;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
 
-public class MainActivityFlic extends Activity {
+public class MainActivityFlic extends SandroideBaseActivity {
     private static final String TAG = "MainActivityFlic";
 
     BLEButton mButton1;
@@ -32,8 +33,6 @@ public class MainActivityFlic extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flic);
-
-        BLEContext.initBLE(this);
 
         mButton2 = (BLEButton) BLEContext.findViewById("cyan_flicbutton");
         if (mButton2 != null) {

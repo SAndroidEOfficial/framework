@@ -109,7 +109,7 @@ public class DeviceControlActivity extends RootActivity implements View.OnClickL
         mConnectionState = (TextView) findViewById(R.id.connection_state);
 
         getActionBar().setTitle(mDeviceFriendlyName);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
         
         this.mBluetoothLeDevice=new BluetoothLeDevice(this, mDeviceAddress);
         this.mBluetoothLeDevice.setBLEOnConnectionEventListener(mBLEOnConnectionEventListener);

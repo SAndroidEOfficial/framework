@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.angel.bleembedded.lib.BLEContext;
 import eu.angel.bleembedded.lib.complements.ArrayListAnySize;
 import eu.angel.bleembedded.lib.data.BLEDataHandlingComplements;
 import eu.angel.bleembedded.lib.data.BLEDeviceData;
@@ -502,16 +503,6 @@ public class BLEDeviceDataCluster {
 
         String text="";
 
-        //File file = new File(context.getFilesDir(), "bledeviceparsers.xml");
-
-//            Uri uri = Uri.parse
-//                    //("content://com.angelo.bleembeddedflasher.fileprovider/bleparsers/bleparsers.xml");
-//                            ("content://eu.angel.bleembedded.beacontest.fileprovider/bleparsers/bleparsers.xml");
-
-//            Uri uri= FileProvider.getUriForFile(context,
-//                    "eu.angel.bleembedded.beacontest.fileprovider", file);
-
-        //For debug purposes
         File file = new File(Environment.getExternalStorageDirectory(),"bledataclustermodels.xml");
 
         InputStream is= null;
@@ -521,279 +512,282 @@ public class BLEDeviceDataCluster {
         int parsingFourthLayerSection=NONE_PARSING;
         int parsingFifthLayerSection=NONE_PARSING;
 
+
         try {
-            //is = context.getContentResolver().openInputStream(uri);
-            is = new FileInputStream(file);
-            Log.d(TAG, is.toString());
+            if (BLEContext.isPermissionsGranted()) {
+                is = new FileInputStream(file);
+                Log.d(TAG, is.toString());
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.v("WriteFile","file created");
+                Log.v("WriteFile", "file created");
 
-        XmlPullParserFactory factory = null;
-        XmlPullParser parser = null;
-        try {
-            factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            parser = factory.newPullParser();
+                XmlPullParserFactory factory = null;
+                XmlPullParser parser = null;
 
-            parser.setInput(is, null);
+                factory = XmlPullParserFactory.newInstance();
+                factory.setNamespaceAware(true);
+                parser = factory.newPullParser();
 
-            int eventType = parser.getEventType();
-            xml_scan_while:
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                String tagname = parser.getName();
-                switch (eventType) {
-                    case XmlPullParser.START_TAG:
-                        if (parsingFirstLayerSection==NONE_PARSING)
-                        {
-                            if (tagname.equalsIgnoreCase("dataClusterModel")){
-                                dataClusterBuilder=new BLEDeviceDataCluster.Builder();
-                                parsingFirstLayerSection=FL_DATACLUSTER_MODEL_PARSING;
-                            }
-                        }else if (parsingFirstLayerSection==FL_DATACLUSTER_MODEL_PARSING)
-                        {
-                            if (parsingSecondLayerSection==NONE_PARSING){
-                                if (tagname.equalsIgnoreCase("data_handling")){
-                                    parsingSecondLayerSection=SL_DATA_HANDLING_PARSING;
-                                } else if (tagname.equalsIgnoreCase("subdata")){
-                                    dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
-                                    dataHandlerBuilder.setIsInput(true);
-                                    subDataBuilder=new BLEDeviceData.Builder();
-                                    parsingSecondLayerSection=SL_SUB_DATA_PARSING;
-                                }
-                            } else if (parsingSecondLayerSection==SL_SUB_DATA_PARSING){
-                                if (parsingThirdLayerSection==NONE_PARSING){
-                                    if (tagname.equalsIgnoreCase("sensor")) {
-                                        subDataBuilder.setData_type(ParsingComplements.DT_SENSOR_STRING);
-                                        parsingThirdLayerSection=TL_SENSOR_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("data_handling")){
-                                        parsingThirdLayerSection=TL_DATA_HANDLING_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("special")){
-                                        parsingThirdLayerSection=TL_DATA_SPECIAL_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("bitlogic")){
-                                        parsingThirdLayerSection=TL_BIT_LOGIC_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("dependency")){
-                                        parsingThirdLayerSection=TL_DEPENDENCY_PARSING;
-                                    }
-                                } else if(parsingThirdLayerSection==TL_DEPENDENCY_PARSING){
-                                    if (parsingFourthLayerSection==NONE_PARSING){
-                                        if (tagname.equalsIgnoreCase("subconfig")){
-                                            dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
-                                            dataHandlerBuilder.setIsInput(true);
-                                            parsingFourthLayerSection=FOL_SUBCONFIG_PARSING;
-                                        }
-                                    } else if (parsingFourthLayerSection==FOL_SUBCONFIG_PARSING){
-                                        if (parsingFifthLayerSection==NONE_PARSING) {
-                                            if (tagname.equalsIgnoreCase("data_handling")) {
-                                                parsingFifthLayerSection = FIL_DATA_HANDLING_PARSING;
-                                            } else if (tagname.equalsIgnoreCase("special")) {
-                                                parsingFifthLayerSection = FIL_DATA_SPECIAL_PARSING;
-                                            } else if (tagname.equalsIgnoreCase("bitlogic")) {
-                                                parsingFifthLayerSection = FIL_BIT_LOGIC_PARSING;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
+                parser.setInput(is, null);
 
-                    case XmlPullParser.TEXT:
-                        text = parser.getText();
-                        break;
-
-                    case XmlPullParser.END_TAG:
-                        if (parsingFirstLayerSection==FL_DATACLUSTER_MODEL_PARSING) {
-                            if (parsingSecondLayerSection==NONE_PARSING) {
+                int eventType = parser.getEventType();
+                xml_scan_while:
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    String tagname = parser.getName();
+                    switch (eventType) {
+                        case XmlPullParser.START_TAG:
+                            if (parsingFirstLayerSection == NONE_PARSING) {
                                 if (tagname.equalsIgnoreCase("dataClusterModel")) {
-                                    bleDeviceDataClusters.add(dataClusterBuilder.build());
-                                    parsingFirstLayerSection=NONE_PARSING;
+                                    dataClusterBuilder = new BLEDeviceDataCluster.Builder();
+                                    parsingFirstLayerSection = FL_DATACLUSTER_MODEL_PARSING;
                                 }
-                                if (text!=null){
-                                    if (tagname.equalsIgnoreCase("type")) {
-                                        dataClusterBuilder.setData_type(text);
-                                    } else if (tagname.equalsIgnoreCase("id")) {
-                                        dataClusterBuilder.setId(text);
-                                    }
-                                }
-                            } else if (parsingSecondLayerSection==SL_DATA_HANDLING_PARSING) {
-                                if (tagname.equalsIgnoreCase("data_handling")) {
-                                    parsingSecondLayerSection=NONE_PARSING;
-                                } else if (tagname.equalsIgnoreCase("type")) {
-                                    dataClusterBuilder.setData_handling(text);
-                                } else if (tagname.equalsIgnoreCase("value")) {
-                                    float value=Float.parseFloat(text);
-                                    dataClusterBuilder.setData_handlingValue(value);
-                                }
-                            }else if (parsingSecondLayerSection==SL_SUB_DATA_PARSING){
-                                if (parsingThirdLayerSection==NONE_PARSING) {
-                                    if (tagname.equalsIgnoreCase("subdata")) {
-                                        //if dependency_id==null data handler is defined directly in the subdata section...
-                                        // need to insert position indication for the hidden handler
-                                        if (subDataBuilder.dependency_id==null){
-                                            dataHandlerBuilder.setPosition(subDataBuilder.position);
-                                            subDataBuilder.addDataHandlerBuilder(dataHandlerBuilder);
-                                        }
-//                                        Log.d(TAG, "id subdata ThirdLayer, data: "+subDataBuilder.id);
-//                                        if (subDataBuilder.id.equals("value"));
-//                                            Log.d(TAG, "data pos: "+subDataBuilder.position);
-                                        dataClusterBuilder.addBleDeviceData(subDataBuilder.build());
-                                        parsingSecondLayerSection=NONE_PARSING;
-                                    }
-                                    if (text!=null){
-                                        if (tagname.equalsIgnoreCase("position")) {
-                                            subDataBuilder.setPosition(text);
-                                            Log.d(TAG, "data pos is: "+text);
-                                        } else if (tagname.equalsIgnoreCase("type")) {
-                                            subDataBuilder.setData_type(text);
-                                            dataHandlerBuilder.setData_type(text);
-                                        } else if (tagname.equalsIgnoreCase("format")) {
-                                            subDataBuilder.setFormat(text);
-                                            dataHandlerBuilder.setFormat(text);
-                                        } else if (tagname.equalsIgnoreCase("id")) {
-                                            subDataBuilder.setId(text);
-                                        } else if (tagname.equalsIgnoreCase("intercept")) {
-                                            dataHandlerBuilder.setIntercept(text);
-                                        } else if (tagname.equalsIgnoreCase("slope")) {
-                                            dataHandlerBuilder.setSlope(text);
-                                        } else if (tagname.equalsIgnoreCase("bytelogic")) {
-                                            dataHandlerBuilder.setByteLogic(text);
-                                        }
-                                    }
-                                } else if (parsingThirdLayerSection==TL_DATA_HANDLING_PARSING){
+                            } else if (parsingFirstLayerSection == FL_DATACLUSTER_MODEL_PARSING) {
+                                if (parsingSecondLayerSection == NONE_PARSING) {
                                     if (tagname.equalsIgnoreCase("data_handling")) {
-                                        parsingThirdLayerSection=NONE_PARSING;
-                                    }else if (tagname.equalsIgnoreCase("type")) {
-                                        dataHandlerBuilder.setHandle_type(text);
-                                    } else if (tagname.equalsIgnoreCase("value")) {
-                                        dataHandlerBuilder.setHandle_value(text);
+                                        parsingSecondLayerSection = SL_DATA_HANDLING_PARSING;
+                                    } else if (tagname.equalsIgnoreCase("subdata")) {
+                                        dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
+                                        dataHandlerBuilder.setIsInput(true);
+                                        subDataBuilder = new BLEDeviceData.Builder();
+                                        parsingSecondLayerSection = SL_SUB_DATA_PARSING;
                                     }
-                                } else if (parsingThirdLayerSection==TL_SENSOR_PARSING){
-                                    if (tagname.equalsIgnoreCase("type")) {
-                                        subDataBuilder.setSensor_type(text);
-                                        Log.d(TAG, "type sens is: "+text);
-                                    } else if (tagname.equalsIgnoreCase("description")) {
-                                        subDataBuilder.setSensorDescription(text);
-                                    } else if (tagname.equalsIgnoreCase("accuracy")) {
-                                        subDataBuilder.setSensorAccuracy(text);
-                                    } else if (tagname.equalsIgnoreCase("drift")) {
-                                        subDataBuilder.setSensorDrift(text);
-                                    } else if (tagname.equalsIgnoreCase("measurementRange")) {
-                                        subDataBuilder.setSensorMeasurementRange(text);
-                                    } else if (tagname.equalsIgnoreCase("measurementFrequency")) {
-                                        subDataBuilder.setSensorMeasurementFrequency(text);
-                                    } else if (tagname.equalsIgnoreCase("measurementLatency")) {
-                                        subDataBuilder.setSensorMeasurementLatency(text);
-                                    } else if (tagname.equalsIgnoreCase("precision")) {
-                                        subDataBuilder.setSensorPrecision(text);
-                                    } else if (tagname.equalsIgnoreCase("resolution")) {
-                                        subDataBuilder.setSensorResolution(text);
-                                    } else if (tagname.equalsIgnoreCase("responseTime")) {
-                                        subDataBuilder.setSensorResponseTime(text);
-                                    } else if (tagname.equalsIgnoreCase("selectivity")) {
-                                        subDataBuilder.setSensorSelectivity(text);
-                                    } else if (tagname.equalsIgnoreCase("detectionLimit")) {
-                                        subDataBuilder.setSensorDetectionLimit(text);
-                                    } else if (tagname.equalsIgnoreCase("sampleRate")) {
-                                        subDataBuilder.setSensorSampleRate(text);
-                                    } else if (tagname.equalsIgnoreCase("condition")) {
-                                        subDataBuilder.setSensorCondition(text);
-                                    } else if (tagname.equalsIgnoreCase("unit")) {
-                                        subDataBuilder.setSensorUnit(text);
-                                    } else if (tagname.equalsIgnoreCase("sensor")) {
-                                        parsingThirdLayerSection=NONE_PARSING;
-                                    }
-                                } else if (parsingThirdLayerSection==TL_DATA_SPECIAL_PARSING){
-                                    if (tagname.equalsIgnoreCase("special")) {
-                                        parsingThirdLayerSection=NONE_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("value")) {
-                                        dataHandlerBuilder.addSpecial(text);
-                                    }
-                                } else if (parsingThirdLayerSection==TL_BIT_LOGIC_PARSING){
-                                    if (tagname.equalsIgnoreCase("bitlogic")) {
-                                        parsingThirdLayerSection=NONE_PARSING;
-                                    } else if (tagname.equalsIgnoreCase("operation")) {
-                                        dataHandlerBuilder.setLogicOperation(text);
-                                    } else if (tagname.equalsIgnoreCase("value")) {
-                                        dataHandlerBuilder.setLogicOperationValue(text);
-                                    }
-                                }
-                                //////////////
-                                else if (parsingThirdLayerSection==TL_DEPENDENCY_PARSING){
-                                    if (parsingFourthLayerSection==NONE_PARSING){
-                                        if (tagname.equalsIgnoreCase("dependency")) {
-                                            parsingThirdLayerSection=NONE_PARSING;
-                                        } else if (tagname.equalsIgnoreCase("id")) {
-                                            subDataBuilder.setDependency_id(text);
-                                        } else if (tagname.equalsIgnoreCase("dependencyformat")) {
-                                            subDataBuilder.setKey_format(text);
+                                } else if (parsingSecondLayerSection == SL_SUB_DATA_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("sensor")) {
+                                            subDataBuilder.setData_type(ParsingComplements.DT_SENSOR_STRING);
+                                            parsingThirdLayerSection = TL_SENSOR_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("data_handling")) {
+                                            parsingThirdLayerSection = TL_DATA_HANDLING_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("special")) {
+                                            parsingThirdLayerSection = TL_DATA_SPECIAL_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("bitlogic")) {
+                                            parsingThirdLayerSection = TL_BIT_LOGIC_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("dependency")) {
+                                            parsingThirdLayerSection = TL_DEPENDENCY_PARSING;
                                         }
-                                    } else if (parsingFourthLayerSection==FOL_SUBCONFIG_PARSING){
-                                    /////////////////
-                                        if (parsingFifthLayerSection==NONE_PARSING) {
+                                    } else if (parsingThirdLayerSection == TL_DEPENDENCY_PARSING) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
                                             if (tagname.equalsIgnoreCase("subconfig")) {
-                                                subDataBuilder.addDataHandlerBuilder(dataHandlerBuilder);
-                                                parsingFourthLayerSection=NONE_PARSING;
+                                                dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
+                                                dataHandlerBuilder.setIsInput(true);
+                                                parsingFourthLayerSection = FOL_SUBCONFIG_PARSING;
                                             }
-                                            if (text!=null){
-                                                if (tagname.equalsIgnoreCase("type")) {
-                                                    dataHandlerBuilder.setData_type(text);
-                                                } else if (tagname.equalsIgnoreCase("format")) {
-                                                    dataHandlerBuilder.setFormat(text);
-                                                } else if (tagname.equalsIgnoreCase("intercept")) {
-                                                    dataHandlerBuilder.setIntercept(text);
-                                                } else if (tagname.equalsIgnoreCase("slope")) {
-                                                    dataHandlerBuilder.setSlope(text);
-                                                } else if (tagname.equalsIgnoreCase("dependencyvalue")){
-                                                    dataHandlerBuilder.setKey_value(text);
-                                                } else if (tagname.equalsIgnoreCase("position")) {
-                                                    dataHandlerBuilder.setPosition(text);
-                                                } else if (tagname.equalsIgnoreCase("bytelogic")) {
-                                                    dataHandlerBuilder.setByteLogic(text);
+                                        } else if (parsingFourthLayerSection == FOL_SUBCONFIG_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("data_handling")) {
+                                                    parsingFifthLayerSection = FIL_DATA_HANDLING_PARSING;
+                                                } else if (tagname.equalsIgnoreCase("special")) {
+                                                    parsingFifthLayerSection = FIL_DATA_SPECIAL_PARSING;
+                                                } else if (tagname.equalsIgnoreCase("bitlogic")) {
+                                                    parsingFifthLayerSection = FIL_BIT_LOGIC_PARSING;
                                                 }
                                             }
-                                        } else if (parsingFifthLayerSection==FIL_DATA_HANDLING_PARSING){
-                                            if (tagname.equalsIgnoreCase("data_handling")) {
-                                                parsingFifthLayerSection=NONE_PARSING;
-                                            }else if (tagname.equalsIgnoreCase("type")) {
-                                                dataHandlerBuilder.setHandle_type(text);
-                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                dataHandlerBuilder.setHandle_value(text);
-                                            }
-                                        } else if (parsingFifthLayerSection==FIL_DATA_SPECIAL_PARSING){
-                                            if (tagname.equalsIgnoreCase("special")) {
-                                                parsingFifthLayerSection=NONE_PARSING;
-                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                dataHandlerBuilder.addSpecial(text);
-                                            }
-                                        } else if (parsingFifthLayerSection==FIL_BIT_LOGIC_PARSING){
-                                            if (tagname.equalsIgnoreCase("bitlogic")) {
-                                                parsingFifthLayerSection=NONE_PARSING;
-                                            } else if (tagname.equalsIgnoreCase("operation")) {
-                                                dataHandlerBuilder.setLogicOperation(text);
-                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                dataHandlerBuilder.setLogicOperationValue(text);
-                                            }
                                         }
-                                        /////////////////
                                     }
                                 }
                             }
-                        }
-                        text=null;
-                        break;
+                            break;
 
-                    default:
-                        break;
+                        case XmlPullParser.TEXT:
+                            text = parser.getText();
+                            break;
+
+                        case XmlPullParser.END_TAG:
+                            if (parsingFirstLayerSection == FL_DATACLUSTER_MODEL_PARSING) {
+                                if (parsingSecondLayerSection == NONE_PARSING) {
+                                    if (tagname.equalsIgnoreCase("dataClusterModel")) {
+                                        bleDeviceDataClusters.add(dataClusterBuilder.build());
+                                        parsingFirstLayerSection = NONE_PARSING;
+                                    }
+                                    if (text != null) {
+                                        if (tagname.equalsIgnoreCase("type")) {
+                                            dataClusterBuilder.setData_type(text);
+                                        } else if (tagname.equalsIgnoreCase("id")) {
+                                            dataClusterBuilder.setId(text);
+                                        }
+                                    }
+                                } else if (parsingSecondLayerSection == SL_DATA_HANDLING_PARSING) {
+                                    if (tagname.equalsIgnoreCase("data_handling")) {
+                                        parsingSecondLayerSection = NONE_PARSING;
+                                    } else if (tagname.equalsIgnoreCase("type")) {
+                                        dataClusterBuilder.setData_handling(text);
+                                    } else if (tagname.equalsIgnoreCase("value")) {
+                                        float value = Float.parseFloat(text);
+                                        dataClusterBuilder.setData_handlingValue(value);
+                                    }
+                                } else if (parsingSecondLayerSection == SL_SUB_DATA_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("subdata")) {
+                                            //if dependency_id==null data handler is defined directly in the subdata section...
+                                            // need to insert position indication for the hidden handler
+                                            if (subDataBuilder.dependency_id == null) {
+                                                dataHandlerBuilder.setPosition(subDataBuilder.position);
+                                                subDataBuilder.addDataHandlerBuilder(dataHandlerBuilder);
+                                            }
+    //                                        Log.d(TAG, "id subdata ThirdLayer, data: "+subDataBuilder.id);
+    //                                        if (subDataBuilder.id.equals("value"));
+    //                                            Log.d(TAG, "data pos: "+subDataBuilder.position);
+                                            dataClusterBuilder.addBleDeviceData(subDataBuilder.build());
+                                            parsingSecondLayerSection = NONE_PARSING;
+                                        }
+                                        if (text != null) {
+                                            if (tagname.equalsIgnoreCase("position")) {
+                                                subDataBuilder.setPosition(text);
+                                                Log.d(TAG, "data pos is: " + text);
+                                            } else if (tagname.equalsIgnoreCase("type")) {
+                                                subDataBuilder.setData_type(text);
+                                                dataHandlerBuilder.setData_type(text);
+                                            } else if (tagname.equalsIgnoreCase("format")) {
+                                                subDataBuilder.setFormat(text);
+                                                dataHandlerBuilder.setFormat(text);
+                                            } else if (tagname.equalsIgnoreCase("id")) {
+                                                subDataBuilder.setId(text);
+                                            } else if (tagname.equalsIgnoreCase("intercept")) {
+                                                dataHandlerBuilder.setIntercept(text);
+                                            } else if (tagname.equalsIgnoreCase("slope")) {
+                                                dataHandlerBuilder.setSlope(text);
+                                            } else if (tagname.equalsIgnoreCase("bytelogic")) {
+                                                dataHandlerBuilder.setByteLogic(text);
+                                            }
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_DATA_HANDLING_PARSING) {
+                                        if (tagname.equalsIgnoreCase("data_handling")) {
+                                            parsingThirdLayerSection = NONE_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("type")) {
+                                            dataHandlerBuilder.setHandle_type(text);
+                                        } else if (tagname.equalsIgnoreCase("value")) {
+                                            dataHandlerBuilder.setHandle_value(text);
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_SENSOR_PARSING) {
+                                        if (tagname.equalsIgnoreCase("type")) {
+                                            subDataBuilder.setSensor_type(text);
+                                            Log.d(TAG, "type sens is: " + text);
+                                        } else if (tagname.equalsIgnoreCase("description")) {
+                                            subDataBuilder.setSensorDescription(text);
+                                        } else if (tagname.equalsIgnoreCase("accuracy")) {
+                                            subDataBuilder.setSensorAccuracy(text);
+                                        } else if (tagname.equalsIgnoreCase("drift")) {
+                                            subDataBuilder.setSensorDrift(text);
+                                        } else if (tagname.equalsIgnoreCase("measurementRange")) {
+                                            subDataBuilder.setSensorMeasurementRange(text);
+                                        } else if (tagname.equalsIgnoreCase("measurementFrequency")) {
+                                            subDataBuilder.setSensorMeasurementFrequency(text);
+                                        } else if (tagname.equalsIgnoreCase("measurementLatency")) {
+                                            subDataBuilder.setSensorMeasurementLatency(text);
+                                        } else if (tagname.equalsIgnoreCase("precision")) {
+                                            subDataBuilder.setSensorPrecision(text);
+                                        } else if (tagname.equalsIgnoreCase("resolution")) {
+                                            subDataBuilder.setSensorResolution(text);
+                                        } else if (tagname.equalsIgnoreCase("responseTime")) {
+                                            subDataBuilder.setSensorResponseTime(text);
+                                        } else if (tagname.equalsIgnoreCase("selectivity")) {
+                                            subDataBuilder.setSensorSelectivity(text);
+                                        } else if (tagname.equalsIgnoreCase("detectionLimit")) {
+                                            subDataBuilder.setSensorDetectionLimit(text);
+                                        } else if (tagname.equalsIgnoreCase("sampleRate")) {
+                                            subDataBuilder.setSensorSampleRate(text);
+                                        } else if (tagname.equalsIgnoreCase("condition")) {
+                                            subDataBuilder.setSensorCondition(text);
+                                        } else if (tagname.equalsIgnoreCase("unit")) {
+                                            subDataBuilder.setSensorUnit(text);
+                                        } else if (tagname.equalsIgnoreCase("sensor")) {
+                                            parsingThirdLayerSection = NONE_PARSING;
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_DATA_SPECIAL_PARSING) {
+                                        if (tagname.equalsIgnoreCase("special")) {
+                                            parsingThirdLayerSection = NONE_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("value")) {
+                                            dataHandlerBuilder.addSpecial(text);
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_BIT_LOGIC_PARSING) {
+                                        if (tagname.equalsIgnoreCase("bitlogic")) {
+                                            parsingThirdLayerSection = NONE_PARSING;
+                                        } else if (tagname.equalsIgnoreCase("operation")) {
+                                            dataHandlerBuilder.setLogicOperation(text);
+                                        } else if (tagname.equalsIgnoreCase("value")) {
+                                            dataHandlerBuilder.setLogicOperationValue(text);
+                                        }
+                                    }
+                                    //////////////
+                                    else if (parsingThirdLayerSection == TL_DEPENDENCY_PARSING) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
+                                            if (tagname.equalsIgnoreCase("dependency")) {
+                                                parsingThirdLayerSection = NONE_PARSING;
+                                            } else if (tagname.equalsIgnoreCase("id")) {
+                                                subDataBuilder.setDependency_id(text);
+                                            } else if (tagname.equalsIgnoreCase("dependencyformat")) {
+                                                subDataBuilder.setKey_format(text);
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_SUBCONFIG_PARSING) {
+                                            /////////////////
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("subconfig")) {
+                                                    subDataBuilder.addDataHandlerBuilder(dataHandlerBuilder);
+                                                    parsingFourthLayerSection = NONE_PARSING;
+                                                }
+                                                if (text != null) {
+                                                    if (tagname.equalsIgnoreCase("type")) {
+                                                        dataHandlerBuilder.setData_type(text);
+                                                    } else if (tagname.equalsIgnoreCase("format")) {
+                                                        dataHandlerBuilder.setFormat(text);
+                                                    } else if (tagname.equalsIgnoreCase("intercept")) {
+                                                        dataHandlerBuilder.setIntercept(text);
+                                                    } else if (tagname.equalsIgnoreCase("slope")) {
+                                                        dataHandlerBuilder.setSlope(text);
+                                                    } else if (tagname.equalsIgnoreCase("dependencyvalue")) {
+                                                        dataHandlerBuilder.setKey_value(text);
+                                                    } else if (tagname.equalsIgnoreCase("position")) {
+                                                        dataHandlerBuilder.setPosition(text);
+                                                    } else if (tagname.equalsIgnoreCase("bytelogic")) {
+                                                        dataHandlerBuilder.setByteLogic(text);
+                                                    }
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_DATA_HANDLING_PARSING) {
+                                                if (tagname.equalsIgnoreCase("data_handling")) {
+                                                    parsingFifthLayerSection = NONE_PARSING;
+                                                } else if (tagname.equalsIgnoreCase("type")) {
+                                                    dataHandlerBuilder.setHandle_type(text);
+                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                    dataHandlerBuilder.setHandle_value(text);
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_DATA_SPECIAL_PARSING) {
+                                                if (tagname.equalsIgnoreCase("special")) {
+                                                    parsingFifthLayerSection = NONE_PARSING;
+                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                    dataHandlerBuilder.addSpecial(text);
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_BIT_LOGIC_PARSING) {
+                                                if (tagname.equalsIgnoreCase("bitlogic")) {
+                                                    parsingFifthLayerSection = NONE_PARSING;
+                                                } else if (tagname.equalsIgnoreCase("operation")) {
+                                                    dataHandlerBuilder.setLogicOperation(text);
+                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                    dataHandlerBuilder.setLogicOperationValue(text);
+                                                }
+                                            }
+                                            /////////////////
+                                        }
+                                    }
+                                }
+                            }
+                            text = null;
+                            break;
+
+                        default:
+                            break;
+                    }
+                    eventType = parser.next();
                 }
-                eventType = parser.next();
             }
+
+        } catch (FileNotFoundException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         } catch (XmlPullParserException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             Log.d(TAG, "Text is: "+text);
             e.printStackTrace();
         } catch (IOException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         }
 

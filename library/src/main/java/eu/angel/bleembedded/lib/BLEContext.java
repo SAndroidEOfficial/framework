@@ -23,17 +23,26 @@
  */
 package eu.angel.bleembedded.lib;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+import eu.angel.bleembedded.lib.activities.SandroideApplication;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.beacon.BLEBeaconManager;
 import eu.angel.bleembedded.lib.device.DevicesManager;
 import eu.angel.bleembedded.lib.item.BLEItem;
@@ -45,7 +54,6 @@ import eu.angel.bleembedded.lib.item.button.BLEButton;
 import eu.angel.bleembedded.lib.item.generalIO.BLEGeneralIO;
 import eu.angel.bleembedded.lib.item.sensor.BLESensor;
 import eu.angel.bleembedded.lib.item.sensor.BLESensorManager;
-import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
 
@@ -90,6 +98,8 @@ public class BLEContext {
 
 	public static FlicManager flicManager;
 	public static boolean flicInitialized=false;
+	public static boolean permissionsGranted =false;
+
 
 	/**
 	 * Return the Object representing the resource pointed by the id. It is used for {@link BLEButton}
@@ -104,8 +114,23 @@ public class BLEContext {
 		return findViewById(bleresource);
 	}
 
+	public static boolean isAppInstalled(String uri) {
+		PackageManager pm = BLEContext.context.getPackageManager();
+		try {
+			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+			return true;
+		} catch (PackageManager.NameNotFoundException e) {
+		}
+
+		return false;
+	}
+
+	public static boolean isFlicAppInstalled() {
+		return isAppInstalled("io.flic.app");
+	}
+
 	public static void startFlicManager() {
-		if (!flicInitialized) {
+		if (!flicInitialized && isFlicAppInstalled()) {
 			flicInitialized=true;
 			FlicManager.setAppCredentials("sandroide", "sandroide", "SAndroidE");
 			FlicManager.getInstance(context, new FlicManagerInitializedCallback() {
@@ -121,6 +146,8 @@ public class BLEContext {
 					}
 				}
 			});
+		} else {
+			Log.i(TAG, "Flic app is not installed. Flic devices won\'t work until Flic app installation. Please check out \"io.flic.app\" on Google Play Store.");
 		}
 	}
 
@@ -241,15 +268,71 @@ public class BLEContext {
 		return getSystemService(service, (Bleresource) null);
 	}
 
+	public static void displayToastOnMainActivity(final String msg){
+		Runnable toastrun = new Runnable() {
+			public void run() {
+				Toast.makeText(SandroideApplication.CurrentActivity!=null?SandroideApplication.CurrentActivity.getBaseContext():context, msg, Toast.LENGTH_LONG).show();
+			}
+		};
+		if (SandroideApplication.CurrentActivity!=null) {
+			SandroideApplication.CurrentActivity.runOnUiThread(toastrun);
+		} else {
+			toastrun.run();
+		}
+	}
+
+	public static boolean isPermissionsGranted() {
+		if (!BLEContext.permissionsGranted) {
+			displayToastOnMainActivity(SandroideBaseActivity.ALERT_PERMISSIONS_NOTGRANTED);
+		}
+		return BLEContext.permissionsGranted;
+	}
+
+	public static void checkAndAskRuntimePermissions(Activity context) {
+
+		/* TODO: verify which permissions are strictly mandatory for sandroide to work
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+		<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+		<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+		<uses-permission android:name="android.permission.BLUETOOTH"/>
+		<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />*/
+
+		if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+				&& ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+				&& ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+				) {
+			BLEContext.permissionsGranted = true;
+		} else {
+			// Should we show an explanation?
+			if (ActivityCompat.shouldShowRequestPermissionRationale(context,Manifest.permission.ACCESS_COARSE_LOCATION)
+					||ActivityCompat.shouldShowRequestPermissionRationale(context,Manifest.permission.BLUETOOTH)
+					||ActivityCompat.shouldShowRequestPermissionRationale(context,Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+				// Show an explanation to the user *asynchronously* -- don't block
+				// this thread waiting for the user's response! After the user
+				// sees the explanation, try again to request the permission.
+				displayToastOnMainActivity(SandroideBaseActivity.ALERT_PERMISSIONS_NOTGRANTED);
+			} else {
+				// No explanation needed, we can request the permission.
+				ActivityCompat.requestPermissions(context,
+						new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+						SandroideBaseActivity.PERMISSIONS_FOR_SANDROIDE);
+			}
+		}
+	}
 
 	/**
 	 * Initialization of the library.
 	 *
 	 * @param context needed to handle the Android resources such as Bluetooth, storage ...
 	 */
-	public static void initBLE(Context context)
+	public static void initBLE(SandroideBaseActivity context)
 	{
-		BLEContext.context=context;
+		if (BLEContext.context == null) { // check if not already called
+			BLEContext.context = context;
+
+			checkAndAskRuntimePermissions(context);
+		}
 	}
 
 	public static void releaseBLE()
@@ -330,7 +413,10 @@ public class BLEContext {
 	 */
 	public static Bleresource getBleResource(String ItemName)
 	{
-		return BleResourcesHandler.getItemDescriptorFromBleresources(context, ItemName);
+		if (BLEContext.isPermissionsGranted())
+			return BleResourcesHandler.getItemDescriptorFromBleresources(context, ItemName);
+		else
+			return null;
 	}
 
 

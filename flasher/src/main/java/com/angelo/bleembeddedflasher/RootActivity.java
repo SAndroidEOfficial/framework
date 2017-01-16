@@ -29,17 +29,11 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-public class RootActivity extends Activity{
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
+
+public class RootActivity extends SandroideBaseActivity {
 
     private static ArrayList<Activity> activities=new ArrayList<>();
-
-    public class ToastException extends Exception {
-
-        public ToastException(String message){
-            super(message);
-        }
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -68,4 +62,9 @@ public class RootActivity extends Activity{
         super.onStop();
         //finishAll();
     }
+
+    public void alert(String alertText) {
+
+    }
+
 }

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import eu.angel.bleembedded.R;
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.complements.Complements;
 import eu.angel.bleembedded.lib.complements.expressionParser.AdditionExpressionNode;
 import eu.angel.bleembedded.lib.complements.expressionParser.ConstantExpressionNode;
@@ -72,7 +73,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class MainActivityTest extends Activity implements BLESensorEventListener,BeaconConsumer
+public class MainActivityTest extends SandroideBaseActivity implements BLESensorEventListener,BeaconConsumer
 {
 
     private static final String TAG = "MainActivityTest";

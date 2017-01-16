@@ -26,6 +26,7 @@ package eu.angel.bleembedded.lib.device;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.UUID;
 
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.data.BLEDeviceData;
 import eu.angel.bleembedded.lib.device.action.BLEAction;
 import eu.angel.bleembedded.lib.device.action.BLEInit;
@@ -572,8 +574,6 @@ public class DevicesDescriptorNew {
 
         String text="";
 
-        //File file = new File(context.getFilesDir(), "devices.xml");
-
         //For debug purposes
         File file = new File(Environment.getExternalStorageDirectory(),"devices.xml");
 
@@ -591,439 +591,199 @@ public class DevicesDescriptorNew {
 
 
         try {
-            //is = context.getContentResolver().openInputStream(uri);
-            is=new FileInputStream(file);
-            Log.d(TAG, is.toString());
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.v("WriteFile","file created");
+            if (BLEContext.isPermissionsGranted()) {
+                is = new FileInputStream(file);
+                Log.d(TAG, is.toString());
 
-        XmlPullParserFactory factory = null;
-        XmlPullParser parser = null;
-        try {
-            factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            parser = factory.newPullParser();
 
-            parser.setInput(is, null);
+                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                factory.setNamespaceAware(true);
 
-            int eventType = parser.getEventType();
-            xml_scan_while:
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                String tagname = parser.getName();
-                //Log.d(TAG, "tagname: "+tagname);
-                switch (eventType) {
-                    case XmlPullParser.START_TAG:
-                        if (parsingFirstLayerSection==NONE_PARSING){
-                            if (tagname.equalsIgnoreCase("device")) {
-                                devicesDescriptorBuilder= new Builder();
-                                bleWritableCharacteristics=new ArrayList<>();
-                                bleReadableCharacteristics=new ArrayList<>();
-                                parsingFirstLayerSection=FL_DEVICE_PARSING;
-                            }
-                        }else if (parsingFirstLayerSection==FL_DEVICE_PARSING){
-                            if (parsingSecondLayerSection==NONE_PARSING){
-                                if (tagname.equalsIgnoreCase("ble")) {
-                                    parsingSecondLayerSection=SL_BLE_PARSING;
-                                }else if (tagname.equalsIgnoreCase("items")) {
-                                    bleInitsBuilders=new ArrayList<>();
-                                    parsingSecondLayerSection=SL_ITEMS_PARSING;
+                XmlPullParser parser = factory.newPullParser();
+                parser.setInput(is, null);
+
+                int eventType = parser.getEventType();
+                xml_scan_while:
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    String tagname = parser.getName();
+                    //Log.d(TAG, "tagname: "+tagname);
+                    switch (eventType) {
+                        case XmlPullParser.START_TAG:
+                            if (parsingFirstLayerSection == NONE_PARSING) {
+                                if (tagname.equalsIgnoreCase("device")) {
+                                    devicesDescriptorBuilder = new Builder();
+                                    bleWritableCharacteristics = new ArrayList<>();
+                                    bleReadableCharacteristics = new ArrayList<>();
+                                    parsingFirstLayerSection = FL_DEVICE_PARSING;
                                 }
-                            }else if (parsingSecondLayerSection==SL_BLE_PARSING){
-                                if (parsingThirdLayerSection==NONE_PARSING){
-                                    if (tagname.equalsIgnoreCase("service")) {
-                                        bleReadableCharacteristicBuilders=new ArrayList<>();
-                                        bleWritableCharacteristicBuilders=new ArrayList<>();
-                                        serviceNameAndUuid= new String[]{"", ""};
-                                        parsingThirdLayerSection=TL_SERVICE;
-                                    }
-                                }else if (parsingThirdLayerSection==TL_SERVICE){
-                                    if (parsingFourthLayerSection==NONE_PARSING){
-                                        if (tagname.equalsIgnoreCase("characteristics")) {
-                                            charNameAndUuid= new String[]{"", ""};
-                                            parsingFourthLayerSection=FOL_CHARACTERISTICS_PARSING;
-                                        }
-                                    }else if (parsingFourthLayerSection==FOL_CHARACTERISTICS_PARSING){
-                                        if (parsingFifthLayerSection==NONE_PARSING){
-                                            if (tagname.equalsIgnoreCase("characteristic")) {
-                                                readableChar=false;
-                                                writableChar=false;
-                                                parsingFifthLayerSection=FIL_CHARACTERISTIC_PARSING;
-                                            }
-                                        } else if (parsingFifthLayerSection==FIL_CHARACTERISTIC_PARSING){
-                                            if (parsingSixthLayerSection==NONE_PARSING){
-                                                if (tagname.equalsIgnoreCase("readable")) {
-                                                    bleReadableCharacteristicBuilder=
-                                                            new BLEReadableCharacteristic.Builder();
-                                                    parsingSixthLayerSection=SIL_READABLE_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("writable")) {
-                                                    bleWritableCharacteristicBuilder=
-                                                            new BLEWritableCharacteristic.Builder();
-                                                    parsingSixthLayerSection=SIL_WRITABLE_PARSING;
-                                                }
-                                            } else if (parsingSixthLayerSection==SIL_READABLE_PARSING){
-                                                if (parsingSeventhLayerSection==NONE_PARSING){
-                                                    if (tagname.equalsIgnoreCase("parser")) {
-                                                        parsingSeventhLayerSection=SEL_PARSER_PARSING;
-                                                    }
-                                                }
-                                            } else if (parsingSixthLayerSection==SIL_WRITABLE_PARSING){
-                                                if (parsingSeventhLayerSection==NONE_PARSING){
-                                                    if (tagname.equalsIgnoreCase("model")) {
-                                                        meassgeModelBuilder= new BLEMessageModel.Builder();
-                                                        parsingSeventhLayerSection=SEL_MODEL_PARSING;
-                                                    }
-                                                } else if(parsingSeventhLayerSection==SEL_MODEL_PARSING){
-                                                    if (parsingEighthLayerSection==NONE_PARSING){
-                                                        if (tagname.equalsIgnoreCase("static")) {
-                                                            bleDeviceDataBuilder=new BLEDeviceData.Builder();
-                                                            parsingEighthLayerSection=EL_STATIC_PARSING;
-                                                        } else if (tagname.equalsIgnoreCase("data")) {
-                                                            dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
-                                                            dataHandlerBuilder.setIsInput(false);
-                                                            bleDeviceDataBuilder=new BLEDeviceData.Builder();
-                                                            parsingEighthLayerSection=EL_DATA_PARSING;
-                                                        }
-                                                    } else if (parsingEighthLayerSection==EL_DATA_PARSING){
-                                                        if (parsingNinthLayerSection==NONE_PARSING){
-                                                            if (tagname.equalsIgnoreCase("special")) {
-                                                                parsingNinthLayerSection=NL_SPECIAL_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("data_handling")) {
-                                                                parsingNinthLayerSection=NL_DATA_HANDLING_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("bitlogic")) {
-                                                                parsingNinthLayerSection=NL_BIT_LOGIC_PARSING;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }else if (parsingSecondLayerSection==SL_ITEMS_PARSING){
-                                if (parsingThirdLayerSection==NONE_PARSING){
-                                    if (tagname.equalsIgnoreCase("rootitem")) {
-                                        cardinality=0;
-                                        itemsInRootItem=new ArrayList<>();
-                                        parsingThirdLayerSection=TL_ROOTITEM_PARSING;
-                                    }
-                                }else if (parsingThirdLayerSection==TL_ROOTITEM_PARSING){
-                                    if (parsingFourthLayerSection==NONE_PARSING){
-                                        if (tagname.equalsIgnoreCase("subitems")) {
-                                            parsingFourthLayerSection=FOL_SUBITEMS_PARSING;
-                                        } else if (tagname.equalsIgnoreCase("init_models")) {
-                                            parsingFourthLayerSection=FOL_INIT_MODELS_PARSING;
-                                        }
-                                    }else if (parsingFourthLayerSection==FOL_SUBITEMS_PARSING){
-                                        if (parsingFifthLayerSection==NONE_PARSING){
-                                            if (tagname.equalsIgnoreCase("item")) {
-                                                initId="";
-                                                bleActionsBuilders=new ArrayList<>();
-                                                readableCharsAndClusters= new LinkedHashMap <>();
-                                                bleActions=new ArrayList<>();
-                                                parsingFifthLayerSection=FIL_ITEM_PARSING;
-                                            }
-                                        }else if (parsingFifthLayerSection==FIL_ITEM_PARSING){
-                                            if (parsingSixthLayerSection==NONE_PARSING){
-                                                if (tagname.equalsIgnoreCase("service")) {
-                                                    mandatoryChars=new ArrayList<>();
-                                                    parsingSixthLayerSection=SIL_SERVICE_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("readableCharacteristic")){
-                                                    clusters=new ArrayList<>();
-                                                    parsingSixthLayerSection=SIL_READABLECHAR_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("action")){
-                                                    bleActionBuilder=new BLEAction.Builder();
-                                                    parsingSixthLayerSection=SIL_ACTION_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("init")){
-                                                    //bleInitBuilder=new BLEInit.Builder();
-                                                    parsingSixthLayerSection=SIL_INIT_PARSING;
-                                                }
-                                            } else if (parsingSixthLayerSection==SIL_ACTION_PARSING){
-                                                if (parsingSeventhLayerSection==NONE_PARSING){
-                                                    if (tagname.equalsIgnoreCase("sequence")) {
-                                                        parsingSeventhLayerSection=SEL_SEQUENCE_PARSING;
-                                                    }
-                                                } else if (parsingSeventhLayerSection==SEL_SEQUENCE_PARSING){
-                                                    if (parsingEighthLayerSection==NONE_PARSING){
-                                                        if (tagname.equalsIgnoreCase("sub_action")) {
-                                                            parsingEighthLayerSection=EL_SUB_ACTION_PARSING;
-                                                            bleSequenceElementBuilder= new BLESequenceElement.Builder();
-                                                        }
-                                                    } else if(parsingEighthLayerSection==EL_SUB_ACTION_PARSING){
-                                                        if (tagname.equalsIgnoreCase("writableCharacteristic")) {
-                                                            parsingNinthLayerSection=NL_WRITABLE_CHAR_PARSING;
-                                                        } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
-                                                            parsingNinthLayerSection=NL_READABLE_CHAR_PARSING;
-                                                        }
-                                                    }
-                                                }
-                                            } else if (parsingSixthLayerSection==SIL_READABLECHAR_PARSING){
-                                                if (parsingSeventhLayerSection==NONE_PARSING){
-                                                    if (tagname.equalsIgnoreCase("dataCluster")) {
-                                                        clusterAndGroup=new String[2];
-                                                        parsingSeventhLayerSection=SEL_DATA_CLUSTER_PARSING;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    } else if (parsingFourthLayerSection==FOL_INIT_MODELS_PARSING){
-                                        if (parsingFifthLayerSection==NONE_PARSING) {
-                                            if (tagname.equalsIgnoreCase("init")) {
-                                                bleInitBuilder=new BLEInit.Builder();
-                                                parsingFifthLayerSection=FIL_INIT_PARSING;
-                                            }
-                                        } else if (parsingFifthLayerSection==FIL_INIT_PARSING){
-                                            if (parsingSixthLayerSection==NONE_PARSING){
-                                                if (tagname.equalsIgnoreCase("sequence")) {
-                                                    parsingSixthLayerSection=SIL_SEQUENCE_PARSING;
-                                                }
-                                            } else if (parsingSixthLayerSection==SIL_SEQUENCE_PARSING){
-                                                if (parsingSeventhLayerSection==NONE_PARSING){
-                                                    if (tagname.equalsIgnoreCase("sub_action")) {
-                                                        parsingSeventhLayerSection=SEL_SUB_ACTION_PARSING;
-                                                        bleSequenceElementBuilder= new BLESequenceElement.Builder();
-                                                    }
-                                                } else if(parsingSeventhLayerSection==SEL_SUB_ACTION_PARSING){
-                                                    if (tagname.equalsIgnoreCase("writableCharacteristic")) {
-                                                        parsingEighthLayerSection=EL_WRITABLE_CHAR_PARSING;
-                                                    } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
-                                                        parsingEighthLayerSection=EL_READABLE_CHAR_PARSING;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-
-                    case XmlPullParser.TEXT:
-                        text = parser.getText();
-                        //Log.d(TAG, "text: "+text);
-                        break;
-
-                    case XmlPullParser.END_TAG:
-                        if (parsingFirstLayerSection==NONE_PARSING) {
-                            if (tagname.equalsIgnoreCase("devices"))
-                                break xml_scan_while;
-                        }
-                        else if (parsingFirstLayerSection==FL_DEVICE_PARSING) {
-                            if (parsingSecondLayerSection == NONE_PARSING) {
-                                if (tagname.equalsIgnoreCase("deviceType")) {
-                                    devicesDescriptorBuilder.setDeviceType(text);
-                                } else if (tagname.equalsIgnoreCase("nickname")) {
-                                    devicesDescriptorBuilder.setNickName(text);
-                                } else if (tagname.equalsIgnoreCase("device")) {
-                                    devicesDescriptors.add(devicesDescriptorBuilder.build());
-                                    parsingFirstLayerSection = NONE_PARSING;
-                                }
-                            } else if (parsingSecondLayerSection == SL_BLE_PARSING) {
-                                if (parsingThirdLayerSection == NONE_PARSING) {
+                            } else if (parsingFirstLayerSection == FL_DEVICE_PARSING) {
+                                if (parsingSecondLayerSection == NONE_PARSING) {
                                     if (tagname.equalsIgnoreCase("ble")) {
-                                        parsingSecondLayerSection = NONE_PARSING;
+                                        parsingSecondLayerSection = SL_BLE_PARSING;
+                                    } else if (tagname.equalsIgnoreCase("items")) {
+                                        bleInitsBuilders = new ArrayList<>();
+                                        parsingSecondLayerSection = SL_ITEMS_PARSING;
                                     }
-                                } else if (parsingThirdLayerSection == TL_SERVICE) {
-                                    if (parsingFourthLayerSection == NONE_PARSING) {
-                                        if (tagname.equalsIgnoreCase("name")) {
-                                            serviceNameAndUuid[0]=text;
-                                        } else if (tagname.equalsIgnoreCase("uuid")) {
-                                            serviceNameAndUuid[1]=text;
-                                        } else if (tagname.equalsIgnoreCase("service")) {
-                                            for (BLEWritableCharacteristic.Builder builder
-                                                    :bleWritableCharacteristicBuilders) {
-                                                builder.setService_name(serviceNameAndUuid[0]);
-                                                BLEWritableCharacteristic bleWritableCharacteristic =
-                                                        builder.build();
-                                                //useful also for sequence section
-                                                if (bleWritableCharacteristic != null)
-                                                    bleWritableCharacteristics.add(bleWritableCharacteristic);
-//                                                    devicesDescriptorBuilder
-//                                                            .setBleWritableCharacteristics
-//                                                                    (bleWritableCharacteristics);
-                                            }
-
-                                            for (BLEReadableCharacteristic.Builder builder
-                                                    :bleReadableCharacteristicBuilders) {
-                                                builder.setService_name(serviceNameAndUuid[0]);
-                                                BLEReadableCharacteristic bleReadableCharacteristic=
-                                                        builder.build();
-                                                if (bleReadableCharacteristic!=null){
-                                                    devicesDescriptorBuilder
-                                                            .addBleReadableCharacteristic
-                                                                    (bleReadableCharacteristic);
-                                                    bleReadableCharacteristics.add(bleReadableCharacteristic);
-                                                }
-                                            }
-
-                                            devicesDescriptorBuilder.putStToUUID
-                                                    (serviceNameAndUuid[0], serviceNameAndUuid[1]);
-                                            parsingThirdLayerSection = NONE_PARSING;
+                                } else if (parsingSecondLayerSection == SL_BLE_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("service")) {
+                                            bleReadableCharacteristicBuilders = new ArrayList<>();
+                                            bleWritableCharacteristicBuilders = new ArrayList<>();
+                                            serviceNameAndUuid = new String[]{"", ""};
+                                            parsingThirdLayerSection = TL_SERVICE;
                                         }
-                                    } else if (parsingFourthLayerSection == FOL_CHARACTERISTICS_PARSING){
-                                        if (parsingFifthLayerSection == NONE_PARSING) {
+                                    } else if (parsingThirdLayerSection == TL_SERVICE) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
                                             if (tagname.equalsIgnoreCase("characteristics")) {
-                                                parsingFourthLayerSection = NONE_PARSING;
+                                                charNameAndUuid = new String[]{"", ""};
+                                                parsingFourthLayerSection = FOL_CHARACTERISTICS_PARSING;
                                             }
-                                        } else if (parsingFifthLayerSection == FIL_CHARACTERISTIC_PARSING){
-                                            if (parsingSixthLayerSection == NONE_PARSING){
-                                                if (tagname.equalsIgnoreCase("name")) {
-                                                    charNameAndUuid[0]=text;
-                                                } else if (tagname.equalsIgnoreCase("uuid")) {
-                                                    charNameAndUuid[1] = text;
-                                                } else if (tagname.equalsIgnoreCase("characteristic")) {
-                                                    devicesDescriptorBuilder.putStToUUID
-                                                            (charNameAndUuid[0], charNameAndUuid[1]);
-                                                    if(readableChar){
-                                                        bleReadableCharacteristicBuilder
-                                                                .setName(charNameAndUuid[0]);
-                                                        bleReadableCharacteristicBuilder
-                                                                .setUUID(charNameAndUuid[1]);
-                                                        bleReadableCharacteristicBuilders
-                                                                .add(bleReadableCharacteristicBuilder);
-//                                                        BLEReadableCharacteristic bleReadableCharacteristic=
-//                                                                bleReadableCharacteristicBuilder.build();
-//                                                        if (bleReadableCharacteristic!=null){
-//                                                            devicesDescriptorBuilder
-//                                                                    .addBleReadableCharacteristic
-//                                                                            (bleReadableCharacteristic);
-//                                                        }
-                                                    }
-                                                    if(writableChar){
-                                                        bleWritableCharacteristicBuilder
-                                                                .setName(charNameAndUuid[0]);
-                                                        bleWritableCharacteristicBuilder
-                                                                .setUuid(charNameAndUuid[1]);
-                                                        bleWritableCharacteristicBuilders.add(bleWritableCharacteristicBuilder);
-                                                        /*BLEWritableCharacteristic bleWritableCharacteristic=
-                                                                bleWritableCharacteristicBuilder.build();
-                                                        if (bleWritableCharacteristic!=null)
-                                                            devicesDescriptorBuilder
-                                                                    .addBleWritableCharacteristic
-                                                                            (bleWritableCharacteristic);*/
-                                                    }
-                                                    parsingFifthLayerSection = NONE_PARSING;
+                                        } else if (parsingFourthLayerSection == FOL_CHARACTERISTICS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("characteristic")) {
+                                                    readableChar = false;
+                                                    writableChar = false;
+                                                    parsingFifthLayerSection = FIL_CHARACTERISTIC_PARSING;
                                                 }
-                                            } else if (parsingSixthLayerSection == SIL_READABLE_PARSING){
-                                                if (parsingSeventhLayerSection == NONE_PARSING){
+                                            } else if (parsingFifthLayerSection == FIL_CHARACTERISTIC_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
                                                     if (tagname.equalsIgnoreCase("readable")) {
-                                                        readableChar=true;
-                                                        parsingSixthLayerSection=NONE_PARSING;
+                                                        bleReadableCharacteristicBuilder =
+                                                                new BLEReadableCharacteristic.Builder();
+                                                        parsingSixthLayerSection = SIL_READABLE_PARSING;
+                                                    } else if (tagname.equalsIgnoreCase("writable")) {
+                                                        bleWritableCharacteristicBuilder =
+                                                                new BLEWritableCharacteristic.Builder();
+                                                        parsingSixthLayerSection = SIL_WRITABLE_PARSING;
                                                     }
-                                                } else if (parsingSeventhLayerSection == SEL_PARSER_PARSING){
-                                                    if (tagname.equalsIgnoreCase("parser_id")) {
-//                                                        for (DeviceDataParser deviceDataParser:deviceDataParsers){
-//                                                            if (deviceDataParser.getParser_id().equalsIgnoreCase(text)){
-//                                                                bleReadableCharacteristicBuilder
-//                                                                        .setParser(deviceDataParser);
-//                                                                bleReadableCharacteristicBuilder
-//                                                                        .setBleDeviceDataClusters(deviceDataParser.cloneDataModel());
-//                                                                break;
-//                                                            }
-//                                                        }
-                                                        for (DeviceDataParserCollector deviceDataParserCollector:deviceDataParserCollectors){
-                                                            if (deviceDataParserCollector.getId().equalsIgnoreCase(text)){
-                                                                bleReadableCharacteristicBuilder
-                                                                        .setDeviceDataParserCollector(deviceDataParserCollector);
-                                                                for (DeviceDataParser deviceDataParser:deviceDataParserCollector.getDeviceDataParsers()){
-                                                                    bleReadableCharacteristicBuilder
-                                                                            .addBLEDeviceDataClusters(deviceDataParser.cloneDataModel());
+                                                } else if (parsingSixthLayerSection == SIL_READABLE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("parser")) {
+                                                            parsingSeventhLayerSection = SEL_PARSER_PARSING;
+                                                        }
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_WRITABLE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("model")) {
+                                                            meassgeModelBuilder = new BLEMessageModel.Builder();
+                                                            parsingSeventhLayerSection = SEL_MODEL_PARSING;
+                                                        }
+                                                    } else if (parsingSeventhLayerSection == SEL_MODEL_PARSING) {
+                                                        if (parsingEighthLayerSection == NONE_PARSING) {
+                                                            if (tagname.equalsIgnoreCase("static")) {
+                                                                bleDeviceDataBuilder = new BLEDeviceData.Builder();
+                                                                parsingEighthLayerSection = EL_STATIC_PARSING;
+                                                            } else if (tagname.equalsIgnoreCase("data")) {
+                                                                dataHandlerBuilder = new BLEDeviceData.DataHandlerBuilder();
+                                                                dataHandlerBuilder.setIsInput(false);
+                                                                bleDeviceDataBuilder = new BLEDeviceData.Builder();
+                                                                parsingEighthLayerSection = EL_DATA_PARSING;
+                                                            }
+                                                        } else if (parsingEighthLayerSection == EL_DATA_PARSING) {
+                                                            if (parsingNinthLayerSection == NONE_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("special")) {
+                                                                    parsingNinthLayerSection = NL_SPECIAL_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("data_handling")) {
+                                                                    parsingNinthLayerSection = NL_DATA_HANDLING_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("bitlogic")) {
+                                                                    parsingNinthLayerSection = NL_BIT_LOGIC_PARSING;
                                                                 }
-                                                                break;
                                                             }
                                                         }
-                                                    } else if (tagname.equalsIgnoreCase("rootitem")) {
-                                                        bleReadableCharacteristicBuilder.setRootItem(text);
-                                                    } else if (tagname.equalsIgnoreCase("parser")) {
-                                                        parsingSeventhLayerSection = NONE_PARSING;
                                                     }
                                                 }
-                                            } else if (parsingSixthLayerSection == SIL_WRITABLE_PARSING) {
-                                                if (parsingSeventhLayerSection == NONE_PARSING) {
-                                                    if (tagname.equalsIgnoreCase("writable")) {
-                                                        writableChar=true;
-                                                        parsingSixthLayerSection=NONE_PARSING;
+                                            }
+                                        }
+                                    }
+                                } else if (parsingSecondLayerSection == SL_ITEMS_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("rootitem")) {
+                                            cardinality = 0;
+                                            itemsInRootItem = new ArrayList<>();
+                                            parsingThirdLayerSection = TL_ROOTITEM_PARSING;
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_ROOTITEM_PARSING) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
+                                            if (tagname.equalsIgnoreCase("subitems")) {
+                                                parsingFourthLayerSection = FOL_SUBITEMS_PARSING;
+                                            } else if (tagname.equalsIgnoreCase("init_models")) {
+                                                parsingFourthLayerSection = FOL_INIT_MODELS_PARSING;
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_SUBITEMS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("item")) {
+                                                    initId = "";
+                                                    bleActionsBuilders = new ArrayList<>();
+                                                    readableCharsAndClusters = new LinkedHashMap<>();
+                                                    bleActions = new ArrayList<>();
+                                                    parsingFifthLayerSection = FIL_ITEM_PARSING;
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_ITEM_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("service")) {
+                                                        mandatoryChars = new ArrayList<>();
+                                                        parsingSixthLayerSection = SIL_SERVICE_PARSING;
+                                                    } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
+                                                        clusters = new ArrayList<>();
+                                                        parsingSixthLayerSection = SIL_READABLECHAR_PARSING;
+                                                    } else if (tagname.equalsIgnoreCase("action")) {
+                                                        bleActionBuilder = new BLEAction.Builder();
+                                                        parsingSixthLayerSection = SIL_ACTION_PARSING;
+                                                    } else if (tagname.equalsIgnoreCase("init")) {
+                                                        //bleInitBuilder=new BLEInit.Builder();
+                                                        parsingSixthLayerSection = SIL_INIT_PARSING;
                                                     }
-                                                } else if (parsingSeventhLayerSection == SEL_MODEL_PARSING) {
-                                                    if (parsingEighthLayerSection == NONE_PARSING) {
-                                                        if (tagname.equalsIgnoreCase("model")) {
-                                                            parsingSeventhLayerSection=NONE_PARSING;
-                                                            bleWritableCharacteristicBuilder
-                                                                    .addBleMessageModel(meassgeModelBuilder.build());
-                                                        } else if (tagname.equalsIgnoreCase("id")) {
-                                                            meassgeModelBuilder.setId(text);
+                                                } else if (parsingSixthLayerSection == SIL_ACTION_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("sequence")) {
+                                                            parsingSeventhLayerSection = SEL_SEQUENCE_PARSING;
                                                         }
-                                                    } else if (parsingEighthLayerSection == EL_STATIC_PARSING) {
-                                                        if (parsingNinthLayerSection == NONE_PARSING) {
-                                                            if (tagname.equalsIgnoreCase("static")) {
-                                                                Log.d(TAG, "id model, static");
-                                                                meassgeModelBuilder
-                                                                        .addBleDeviceStaticData(bleDeviceDataBuilder.build());
-                                                                parsingEighthLayerSection=NONE_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                                bleDeviceDataBuilder.setDefaultValue(text);
-                                                            } else if (tagname.equalsIgnoreCase("format")) {
-                                                                bleDeviceDataBuilder.setFormat(text);
-                                                            } else if (tagname.equalsIgnoreCase("position")) {
-                                                                bleDeviceDataBuilder.setPosition(text);
-                                                            } else if (tagname.equalsIgnoreCase("id")) {
-                                                                bleDeviceDataBuilder.setId(text);
+                                                    } else if (parsingSeventhLayerSection == SEL_SEQUENCE_PARSING) {
+                                                        if (parsingEighthLayerSection == NONE_PARSING) {
+                                                            if (tagname.equalsIgnoreCase("sub_action")) {
+                                                                parsingEighthLayerSection = EL_SUB_ACTION_PARSING;
+                                                                bleSequenceElementBuilder = new BLESequenceElement.Builder();
+                                                            }
+                                                        } else if (parsingEighthLayerSection == EL_SUB_ACTION_PARSING) {
+                                                            if (tagname.equalsIgnoreCase("writableCharacteristic")) {
+                                                                parsingNinthLayerSection = NL_WRITABLE_CHAR_PARSING;
+                                                            } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
+                                                                parsingNinthLayerSection = NL_READABLE_CHAR_PARSING;
                                                             }
                                                         }
-                                                    } else if (parsingEighthLayerSection == EL_DATA_PARSING) {
-                                                        if (parsingNinthLayerSection == NONE_PARSING) {
-                                                            if (tagname.equalsIgnoreCase("data")) {
-                                                                if (bleDeviceDataBuilder.dependency_id==null){
-                                                                    dataHandlerBuilder.setPosition
-                                                                            (bleDeviceDataBuilder.position);
-                                                                    bleDeviceDataBuilder
-                                                                            .addDataHandlerBuilder(dataHandlerBuilder);
-                                                                }
-                                                                Log.d(TAG, "id model, data");
-                                                                meassgeModelBuilder
-                                                                        .addBleDeviceData(bleDeviceDataBuilder.build());
-                                                                parsingEighthLayerSection=NONE_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("id")) {
-                                                                bleDeviceDataBuilder.setId(text);
-                                                            } else if (tagname.equalsIgnoreCase("format")) {
-                                                                bleDeviceDataBuilder.setFormat(text);
-                                                                dataHandlerBuilder.setFormat(text);
-                                                            } else if (tagname.equalsIgnoreCase("type")) {
-                                                                bleDeviceDataBuilder.setData_type(text);
-                                                                dataHandlerBuilder.setData_type(text);
-                                                            } else if (tagname.equalsIgnoreCase("position")) {
-                                                                bleDeviceDataBuilder.setPosition(text);
-                                                            } else if (tagname.equalsIgnoreCase("slope")) {
-                                                                dataHandlerBuilder.setSlope(text);
-                                                            } else if (tagname.equalsIgnoreCase("intercept")) {
-                                                                dataHandlerBuilder.setIntercept(text);
-                                                            } else if (tagname.equalsIgnoreCase("bytelogic")) {
-                                                                dataHandlerBuilder.setByteLogic(text);
-                                                            }
-                                                        } else if (parsingNinthLayerSection == NL_SPECIAL_PARSING) {
-                                                            if (tagname.equalsIgnoreCase("special")) {
-                                                                parsingNinthLayerSection=NONE_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                                dataHandlerBuilder.addSpecial(text);
-                                                            }
-                                                        } else if (parsingNinthLayerSection == NL_DATA_HANDLING_PARSING) {
-                                                            if (tagname.equalsIgnoreCase("data_handling")) {
-                                                                parsingNinthLayerSection=NONE_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("type")) {
-                                                                dataHandlerBuilder.setHandle_type(text);
-                                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                                dataHandlerBuilder.setHandle_value(text);
-                                                            }
-                                                        } else if (parsingNinthLayerSection==NL_BIT_LOGIC_PARSING){
-                                                            if (tagname.equalsIgnoreCase("bitlogic")) {
-                                                                parsingNinthLayerSection=NONE_PARSING;
-                                                            } else if (tagname.equalsIgnoreCase("operation")) {
-                                                                dataHandlerBuilder.setLogicOperation(text);
-                                                            } else if (tagname.equalsIgnoreCase("value")) {
-                                                                dataHandlerBuilder.setLogicOperationValue(text);
-                                                            }
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_READABLECHAR_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("dataCluster")) {
+                                                            clusterAndGroup = new String[2];
+                                                            parsingSeventhLayerSection = SEL_DATA_CLUSTER_PARSING;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_INIT_MODELS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("init")) {
+                                                    bleInitBuilder = new BLEInit.Builder();
+                                                    parsingFifthLayerSection = FIL_INIT_PARSING;
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_INIT_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("sequence")) {
+                                                        parsingSixthLayerSection = SIL_SEQUENCE_PARSING;
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_SEQUENCE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("sub_action")) {
+                                                            parsingSeventhLayerSection = SEL_SUB_ACTION_PARSING;
+                                                            bleSequenceElementBuilder = new BLESequenceElement.Builder();
+                                                        }
+                                                    } else if (parsingSeventhLayerSection == SEL_SUB_ACTION_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("writableCharacteristic")) {
+                                                            parsingEighthLayerSection = EL_WRITABLE_CHAR_PARSING;
+                                                        } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
+                                                            parsingEighthLayerSection = EL_READABLE_CHAR_PARSING;
                                                         }
                                                     }
                                                 }
@@ -1031,161 +791,473 @@ public class DevicesDescriptorNew {
                                         }
                                     }
                                 }
-                            } else if (parsingSecondLayerSection == SL_ITEMS_PARSING) {
-                                if (parsingThirdLayerSection == NONE_PARSING) {
-                                    if (tagname.equalsIgnoreCase("items")) {
-                                        for (BLEInit.Builder builder:bleInitsBuilders){
-                                            //builder.setItemId(itemName);
-                                            devicesDescriptorBuilder.addBleInit
-                                                    (builder.build());
-                                        }
-                                        parsingSecondLayerSection = NONE_PARSING;
+                            }
+                            break;
+
+                        case XmlPullParser.TEXT:
+                            text = parser.getText();
+                            //Log.d(TAG, "text: "+text);
+                            break;
+
+                        case XmlPullParser.END_TAG:
+                            if (parsingFirstLayerSection == NONE_PARSING) {
+                                if (tagname.equalsIgnoreCase("devices"))
+                                    break xml_scan_while;
+                            } else if (parsingFirstLayerSection == FL_DEVICE_PARSING) {
+                                if (parsingSecondLayerSection == NONE_PARSING) {
+                                    if (tagname.equalsIgnoreCase("deviceType")) {
+                                        devicesDescriptorBuilder.setDeviceType(text);
+                                    } else if (tagname.equalsIgnoreCase("nickname")) {
+                                        devicesDescriptorBuilder.setNickName(text);
+                                    } else if (tagname.equalsIgnoreCase("device")) {
+                                        devicesDescriptors.add(devicesDescriptorBuilder.build());
+                                        parsingFirstLayerSection = NONE_PARSING;
                                     }
-                                } else if (parsingThirdLayerSection == TL_ROOTITEM_PARSING) {
-                                    if (parsingFourthLayerSection == NONE_PARSING) {
-                                        if (tagname.equalsIgnoreCase("name")) {
-                                            rootItemName=text;
-                                        } else if (tagname.equalsIgnoreCase("rootitem")) {
-                                            devicesDescriptorBuilder.putDevRawItemNumber
-                                                    (rootItemName, cardinality);
-                                            aux=new String[itemsInRootItem.size()];
-                                            for (int i=0;i<itemsInRootItem.size();i++)
-                                                aux[i]=itemsInRootItem.get(i);
-                                            devicesDescriptorBuilder.putRawItemToItems
-                                                    (rootItemName, aux);
-                                            parsingThirdLayerSection = NONE_PARSING;
+                                } else if (parsingSecondLayerSection == SL_BLE_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("ble")) {
+                                            parsingSecondLayerSection = NONE_PARSING;
                                         }
-                                    } else if (parsingFourthLayerSection == FOL_SUBITEMS_PARSING) {
-                                        if (parsingFifthLayerSection == NONE_PARSING) {
-                                            if (tagname.equalsIgnoreCase("subitems")) {
-                                                parsingFourthLayerSection = NONE_PARSING;
-                                            }
-                                        } else if (parsingFifthLayerSection == FIL_ITEM_PARSING) {
-                                            if (parsingSixthLayerSection == NONE_PARSING) {
-                                                if (tagname.equalsIgnoreCase("name")) {
-                                                    itemName=text;
-                                                    devicesDescriptorBuilder.putDevItemCardinality
-                                                            (itemName, cardinality);
-                                                    devicesDescriptorBuilder.putItemRoots
-                                                            (itemName, new String[]{rootItemName});
-                                                    cardinality++;
-                                                    itemsInRootItem.add(itemName);
-                                                } else if (tagname.equalsIgnoreCase("bletype")) {
-                                                    devicesDescriptorBuilder
-                                                            .putDevItemsToItemType(itemName, text);
-                                                } else if (tagname.equalsIgnoreCase("item")) {
+                                    } else if (parsingThirdLayerSection == TL_SERVICE) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
+                                            if (tagname.equalsIgnoreCase("name")) {
+                                                serviceNameAndUuid[0] = text;
+                                            } else if (tagname.equalsIgnoreCase("uuid")) {
+                                                serviceNameAndUuid[1] = text;
+                                            } else if (tagname.equalsIgnoreCase("service")) {
+                                                for (BLEWritableCharacteristic.Builder builder
+                                                        : bleWritableCharacteristicBuilders) {
+                                                    builder.setService_name(serviceNameAndUuid[0]);
+                                                    BLEWritableCharacteristic bleWritableCharacteristic =
+                                                            builder.build();
+                                                    //useful also for sequence section
+                                                    if (bleWritableCharacteristic != null)
+                                                        bleWritableCharacteristics.add(bleWritableCharacteristic);
+                                                    //                                                    devicesDescriptorBuilder
+                                                    //                                                            .setBleWritableCharacteristics
+                                                    //                                                                    (bleWritableCharacteristics);
+                                                }
 
-                                                    for (BLEAction.Builder builder:bleActionsBuilders){
-                                                        builder.setItemId(itemName);
-                                                        devicesDescriptorBuilder.addBleAction
-                                                                (builder.build());
+                                                for (BLEReadableCharacteristic.Builder builder
+                                                        : bleReadableCharacteristicBuilders) {
+                                                    builder.setService_name(serviceNameAndUuid[0]);
+                                                    BLEReadableCharacteristic bleReadableCharacteristic =
+                                                            builder.build();
+                                                    if (bleReadableCharacteristic != null) {
+                                                        devicesDescriptorBuilder
+                                                                .addBleReadableCharacteristic
+                                                                        (bleReadableCharacteristic);
+                                                        bleReadableCharacteristics.add(bleReadableCharacteristic);
                                                     }
-
-                                                    devicesDescriptorBuilder.putInitForDevItem
-                                                            (itemName, initId);
-
-//                                                    for (BLEInit.Builder builder:bleInitsBuilders){
-//                                                        builder.setItemId(itemName);
-//                                                        devicesDescriptorBuilder.addBleInit
-//                                                                (builder.build());
-//                                                    }
-
-                                                    String[] aux_str= new String[bleActions.size()];
-                                                    for (int i=0; i<bleActions.size();i++)
-                                                        aux_str[i]=bleActions.get(i);
-                                                    devicesDescriptorBuilder
-                                                            .putReadableCharacteristicsAndClustersPlusGroupForDevItem
-                                                                    (itemName, readableCharsAndClusters)
-                                                            .putActionsForDevItem(itemName, aux_str);
-                                                    parsingFifthLayerSection = NONE_PARSING;
                                                 }
-                                            } else if (parsingSixthLayerSection == SIL_SERVICE_PARSING) {
-                                                if (tagname.equalsIgnoreCase("name")) {
-                                                    mandatoryService = text;
-                                                } else if (tagname.equalsIgnoreCase("characteristic")) {
-                                                    mandatoryChars.add(text);
-                                                } else if (tagname.equalsIgnoreCase("service")) {
-                                                    aux = new String[mandatoryChars.size()];
-                                                    for (int i = 0; i < mandatoryChars.size(); i++)
-                                                        aux[i] = mandatoryChars.get(i);
-                                                    mandatoryServAndChars = new HashMap<>();
-                                                    mandatoryServAndChars.put(mandatoryService, aux);
-                                                    devicesDescriptorBuilder
-                                                            .putMandatoryServicesCharacteristicsForDevItem
-                                                                    (itemName, mandatoryServAndChars);
-                                                    devicesDescriptorBuilder
-                                                            .putMandatoryCharactForDevItem
-                                                                    (itemName, aux);
-                                                    parsingSixthLayerSection = NONE_PARSING;
+
+                                                devicesDescriptorBuilder.putStToUUID
+                                                        (serviceNameAndUuid[0], serviceNameAndUuid[1]);
+                                                parsingThirdLayerSection = NONE_PARSING;
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_CHARACTERISTICS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("characteristics")) {
+                                                    parsingFourthLayerSection = NONE_PARSING;
                                                 }
-                                            }else if (parsingSixthLayerSection == SIL_READABLECHAR_PARSING) {
-                                                if (parsingSeventhLayerSection == NONE_PARSING) {
+                                            } else if (parsingFifthLayerSection == FIL_CHARACTERISTIC_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
                                                     if (tagname.equalsIgnoreCase("name")) {
-                                                        readableCharName=text;
-                                                    }else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
-                                                        auxDouble=new String[clusters.size()][2];
-                                                        for (int i=0;i<clusters.size();i++)
-                                                            auxDouble[i]=clusters.get(i);
-                                                        readableCharsAndClusters.put(readableCharName, auxDouble);
+                                                        charNameAndUuid[0] = text;
+                                                    } else if (tagname.equalsIgnoreCase("uuid")) {
+                                                        charNameAndUuid[1] = text;
+                                                    } else if (tagname.equalsIgnoreCase("characteristic")) {
+                                                        devicesDescriptorBuilder.putStToUUID
+                                                                (charNameAndUuid[0], charNameAndUuid[1]);
+                                                        if (readableChar) {
+                                                            bleReadableCharacteristicBuilder
+                                                                    .setName(charNameAndUuid[0]);
+                                                            bleReadableCharacteristicBuilder
+                                                                    .setUUID(charNameAndUuid[1]);
+                                                            bleReadableCharacteristicBuilders
+                                                                    .add(bleReadableCharacteristicBuilder);
+                                                            //                                                        BLEReadableCharacteristic bleReadableCharacteristic=
+                                                            //                                                                bleReadableCharacteristicBuilder.build();
+                                                            //                                                        if (bleReadableCharacteristic!=null){
+                                                            //                                                            devicesDescriptorBuilder
+                                                            //                                                                    .addBleReadableCharacteristic
+                                                            //                                                                            (bleReadableCharacteristic);
+                                                            //                                                        }
+                                                        }
+                                                        if (writableChar) {
+                                                            bleWritableCharacteristicBuilder
+                                                                    .setName(charNameAndUuid[0]);
+                                                            bleWritableCharacteristicBuilder
+                                                                    .setUuid(charNameAndUuid[1]);
+                                                            bleWritableCharacteristicBuilders.add(bleWritableCharacteristicBuilder);
+                                                            /*BLEWritableCharacteristic bleWritableCharacteristic=
+                                                                    bleWritableCharacteristicBuilder.build();
+                                                            if (bleWritableCharacteristic!=null)
+                                                                devicesDescriptorBuilder
+                                                                        .addBleWritableCharacteristic
+                                                                                (bleWritableCharacteristic);*/
+                                                        }
+                                                        parsingFifthLayerSection = NONE_PARSING;
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_READABLE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("readable")) {
+                                                            readableChar = true;
+                                                            parsingSixthLayerSection = NONE_PARSING;
+                                                        }
+                                                    } else if (parsingSeventhLayerSection == SEL_PARSER_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("parser_id")) {
+                                                            //                                                        for (DeviceDataParser deviceDataParser:deviceDataParsers){
+                                                            //                                                            if (deviceDataParser.getParser_id().equalsIgnoreCase(text)){
+                                                            //                                                                bleReadableCharacteristicBuilder
+                                                            //                                                                        .setParser(deviceDataParser);
+                                                            //                                                                bleReadableCharacteristicBuilder
+                                                            //                                                                        .setBleDeviceDataClusters(deviceDataParser.cloneDataModel());
+                                                            //                                                                break;
+                                                            //                                                            }
+                                                            //                                                        }
+                                                            for (DeviceDataParserCollector deviceDataParserCollector : deviceDataParserCollectors) {
+                                                                if (deviceDataParserCollector.getId().equalsIgnoreCase(text)) {
+                                                                    bleReadableCharacteristicBuilder
+                                                                            .setDeviceDataParserCollector(deviceDataParserCollector);
+                                                                    for (DeviceDataParser deviceDataParser : deviceDataParserCollector.getDeviceDataParsers()) {
+                                                                        bleReadableCharacteristicBuilder
+                                                                                .addBLEDeviceDataClusters(deviceDataParser.cloneDataModel());
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        } else if (tagname.equalsIgnoreCase("rootitem")) {
+                                                            bleReadableCharacteristicBuilder.setRootItem(text);
+                                                        } else if (tagname.equalsIgnoreCase("parser")) {
+                                                            parsingSeventhLayerSection = NONE_PARSING;
+                                                        }
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_WRITABLE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("writable")) {
+                                                            writableChar = true;
+                                                            parsingSixthLayerSection = NONE_PARSING;
+                                                        }
+                                                    } else if (parsingSeventhLayerSection == SEL_MODEL_PARSING) {
+                                                        if (parsingEighthLayerSection == NONE_PARSING) {
+                                                            if (tagname.equalsIgnoreCase("model")) {
+                                                                parsingSeventhLayerSection = NONE_PARSING;
+                                                                bleWritableCharacteristicBuilder
+                                                                        .addBleMessageModel(meassgeModelBuilder.build());
+                                                            } else if (tagname.equalsIgnoreCase("id")) {
+                                                                meassgeModelBuilder.setId(text);
+                                                            }
+                                                        } else if (parsingEighthLayerSection == EL_STATIC_PARSING) {
+                                                            if (parsingNinthLayerSection == NONE_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("static")) {
+                                                                    Log.d(TAG, "id model, static");
+                                                                    meassgeModelBuilder
+                                                                            .addBleDeviceStaticData(bleDeviceDataBuilder.build());
+                                                                    parsingEighthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                                    bleDeviceDataBuilder.setDefaultValue(text);
+                                                                } else if (tagname.equalsIgnoreCase("format")) {
+                                                                    bleDeviceDataBuilder.setFormat(text);
+                                                                } else if (tagname.equalsIgnoreCase("position")) {
+                                                                    bleDeviceDataBuilder.setPosition(text);
+                                                                } else if (tagname.equalsIgnoreCase("id")) {
+                                                                    bleDeviceDataBuilder.setId(text);
+                                                                }
+                                                            }
+                                                        } else if (parsingEighthLayerSection == EL_DATA_PARSING) {
+                                                            if (parsingNinthLayerSection == NONE_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("data")) {
+                                                                    if (bleDeviceDataBuilder.dependency_id == null) {
+                                                                        dataHandlerBuilder.setPosition
+                                                                                (bleDeviceDataBuilder.position);
+                                                                        bleDeviceDataBuilder
+                                                                                .addDataHandlerBuilder(dataHandlerBuilder);
+                                                                    }
+                                                                    Log.d(TAG, "id model, data");
+                                                                    meassgeModelBuilder
+                                                                            .addBleDeviceData(bleDeviceDataBuilder.build());
+                                                                    parsingEighthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("id")) {
+                                                                    bleDeviceDataBuilder.setId(text);
+                                                                } else if (tagname.equalsIgnoreCase("format")) {
+                                                                    bleDeviceDataBuilder.setFormat(text);
+                                                                    dataHandlerBuilder.setFormat(text);
+                                                                } else if (tagname.equalsIgnoreCase("type")) {
+                                                                    bleDeviceDataBuilder.setData_type(text);
+                                                                    dataHandlerBuilder.setData_type(text);
+                                                                } else if (tagname.equalsIgnoreCase("position")) {
+                                                                    bleDeviceDataBuilder.setPosition(text);
+                                                                } else if (tagname.equalsIgnoreCase("slope")) {
+                                                                    dataHandlerBuilder.setSlope(text);
+                                                                } else if (tagname.equalsIgnoreCase("intercept")) {
+                                                                    dataHandlerBuilder.setIntercept(text);
+                                                                } else if (tagname.equalsIgnoreCase("bytelogic")) {
+                                                                    dataHandlerBuilder.setByteLogic(text);
+                                                                }
+                                                            } else if (parsingNinthLayerSection == NL_SPECIAL_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("special")) {
+                                                                    parsingNinthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                                    dataHandlerBuilder.addSpecial(text);
+                                                                }
+                                                            } else if (parsingNinthLayerSection == NL_DATA_HANDLING_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("data_handling")) {
+                                                                    parsingNinthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("type")) {
+                                                                    dataHandlerBuilder.setHandle_type(text);
+                                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                                    dataHandlerBuilder.setHandle_value(text);
+                                                                }
+                                                            } else if (parsingNinthLayerSection == NL_BIT_LOGIC_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("bitlogic")) {
+                                                                    parsingNinthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("operation")) {
+                                                                    dataHandlerBuilder.setLogicOperation(text);
+                                                                } else if (tagname.equalsIgnoreCase("value")) {
+                                                                    dataHandlerBuilder.setLogicOperationValue(text);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else if (parsingSecondLayerSection == SL_ITEMS_PARSING) {
+                                    if (parsingThirdLayerSection == NONE_PARSING) {
+                                        if (tagname.equalsIgnoreCase("items")) {
+                                            for (BLEInit.Builder builder : bleInitsBuilders) {
+                                                //builder.setItemId(itemName);
+                                                devicesDescriptorBuilder.addBleInit
+                                                        (builder.build());
+                                            }
+                                            parsingSecondLayerSection = NONE_PARSING;
+                                        }
+                                    } else if (parsingThirdLayerSection == TL_ROOTITEM_PARSING) {
+                                        if (parsingFourthLayerSection == NONE_PARSING) {
+                                            if (tagname.equalsIgnoreCase("name")) {
+                                                rootItemName = text;
+                                            } else if (tagname.equalsIgnoreCase("rootitem")) {
+                                                devicesDescriptorBuilder.putDevRawItemNumber
+                                                        (rootItemName, cardinality);
+                                                aux = new String[itemsInRootItem.size()];
+                                                for (int i = 0; i < itemsInRootItem.size(); i++)
+                                                    aux[i] = itemsInRootItem.get(i);
+                                                devicesDescriptorBuilder.putRawItemToItems
+                                                        (rootItemName, aux);
+                                                parsingThirdLayerSection = NONE_PARSING;
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_SUBITEMS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("subitems")) {
+                                                    parsingFourthLayerSection = NONE_PARSING;
+                                                }
+                                            } else if (parsingFifthLayerSection == FIL_ITEM_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("name")) {
+                                                        itemName = text;
+                                                        devicesDescriptorBuilder.putDevItemCardinality
+                                                                (itemName, cardinality);
+                                                        devicesDescriptorBuilder.putItemRoots
+                                                                (itemName, new String[]{rootItemName});
+                                                        cardinality++;
+                                                        itemsInRootItem.add(itemName);
+                                                    } else if (tagname.equalsIgnoreCase("bletype")) {
+                                                        devicesDescriptorBuilder
+                                                                .putDevItemsToItemType(itemName, text);
+                                                    } else if (tagname.equalsIgnoreCase("item")) {
+
+                                                        for (BLEAction.Builder builder : bleActionsBuilders) {
+                                                            builder.setItemId(itemName);
+                                                            devicesDescriptorBuilder.addBleAction
+                                                                    (builder.build());
+                                                        }
+
+                                                        devicesDescriptorBuilder.putInitForDevItem
+                                                                (itemName, initId);
+
+                                                        //                                                    for (BLEInit.Builder builder:bleInitsBuilders){
+                                                        //                                                        builder.setItemId(itemName);
+                                                        //                                                        devicesDescriptorBuilder.addBleInit
+                                                        //                                                                (builder.build());
+                                                        //                                                    }
+
+                                                        String[] aux_str = new String[bleActions.size()];
+                                                        for (int i = 0; i < bleActions.size(); i++)
+                                                            aux_str[i] = bleActions.get(i);
+                                                        devicesDescriptorBuilder
+                                                                .putReadableCharacteristicsAndClustersPlusGroupForDevItem
+                                                                        (itemName, readableCharsAndClusters)
+                                                                .putActionsForDevItem(itemName, aux_str);
+                                                        parsingFifthLayerSection = NONE_PARSING;
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_SERVICE_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("name")) {
+                                                        mandatoryService = text;
+                                                    } else if (tagname.equalsIgnoreCase("characteristic")) {
+                                                        mandatoryChars.add(text);
+                                                    } else if (tagname.equalsIgnoreCase("service")) {
+                                                        aux = new String[mandatoryChars.size()];
+                                                        for (int i = 0; i < mandatoryChars.size(); i++)
+                                                            aux[i] = mandatoryChars.get(i);
+                                                        mandatoryServAndChars = new HashMap<>();
+                                                        mandatoryServAndChars.put(mandatoryService, aux);
+                                                        devicesDescriptorBuilder
+                                                                .putMandatoryServicesCharacteristicsForDevItem
+                                                                        (itemName, mandatoryServAndChars);
+                                                        devicesDescriptorBuilder
+                                                                .putMandatoryCharactForDevItem
+                                                                        (itemName, aux);
                                                         parsingSixthLayerSection = NONE_PARSING;
                                                     }
-                                                } else if(parsingSeventhLayerSection == SEL_DATA_CLUSTER_PARSING) {
-                                                    if (tagname.equalsIgnoreCase("dataCluster")) {
-                                                        if ((clusterAndGroup[0]==null)){
-                                                            if (clusterAndGroup[1]==null){
-                                                                clusterAndGroup[0]=text;
-                                                                clusterAndGroup[1]=text;
-                                                            }
-                                                            else{
-                                                                //TODO: throw exception name of the cluster missing
-                                                            }
-                                                        } else if (clusterAndGroup[1]==null){
-                                                            clusterAndGroup[1]=clusterAndGroup[0];
+                                                } else if (parsingSixthLayerSection == SIL_READABLECHAR_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("name")) {
+                                                            readableCharName = text;
+                                                        } else if (tagname.equalsIgnoreCase("readableCharacteristic")) {
+                                                            auxDouble = new String[clusters.size()][2];
+                                                            for (int i = 0; i < clusters.size(); i++)
+                                                                auxDouble[i] = clusters.get(i);
+                                                            readableCharsAndClusters.put(readableCharName, auxDouble);
+                                                            parsingSixthLayerSection = NONE_PARSING;
                                                         }
-                                                        clusters.add(clusterAndGroup);
-                                                        parsingSeventhLayerSection=NONE_PARSING;
-                                                    } else if (tagname.equalsIgnoreCase("name")) {
-                                                        clusterAndGroup[0]=text;
-                                                    } else if (tagname.equalsIgnoreCase("group")) {
-                                                        clusterAndGroup[1]=text;
+                                                    } else if (parsingSeventhLayerSection == SEL_DATA_CLUSTER_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("dataCluster")) {
+                                                            if ((clusterAndGroup[0] == null)) {
+                                                                if (clusterAndGroup[1] == null) {
+                                                                    clusterAndGroup[0] = text;
+                                                                    clusterAndGroup[1] = text;
+                                                                } else {
+                                                                    //TODO: throw exception name of the cluster missing
+                                                                }
+                                                            } else if (clusterAndGroup[1] == null) {
+                                                                clusterAndGroup[1] = clusterAndGroup[0];
+                                                            }
+                                                            clusters.add(clusterAndGroup);
+                                                            parsingSeventhLayerSection = NONE_PARSING;
+                                                        } else if (tagname.equalsIgnoreCase("name")) {
+                                                            clusterAndGroup[0] = text;
+                                                        } else if (tagname.equalsIgnoreCase("group")) {
+                                                            clusterAndGroup[1] = text;
+                                                        }
+                                                    }
+
+                                                } else if (parsingSixthLayerSection == SIL_ACTION_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
+                                                        if (tagname.equalsIgnoreCase("action")) {
+                                                            bleActionsBuilders.add(bleActionBuilder);
+                                                            parsingSixthLayerSection = NONE_PARSING;
+                                                        } else if (tagname.equalsIgnoreCase("id")) {
+                                                            bleActionBuilder.setId(text);
+                                                            bleActions.add(text);
+                                                        } else if (tagname.equalsIgnoreCase("post_delay")) {
+                                                            bleActionBuilder.setPost_delay(text);
+                                                        }
+                                                    } else if (parsingSeventhLayerSection == SEL_SEQUENCE_PARSING) {
+                                                        if (parsingEighthLayerSection == NONE_PARSING) {
+                                                            if (tagname.equalsIgnoreCase("sequence")) {
+                                                                parsingSeventhLayerSection = NONE_PARSING;
+                                                            }
+                                                        } else if (parsingEighthLayerSection == EL_SUB_ACTION_PARSING) {
+                                                            if (parsingNinthLayerSection == NONE_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("sub_action")) {
+                                                                    //TODO: harmonize xml label and class names
+                                                                    bleActionBuilder.addBleSequenceElement
+                                                                            (bleSequenceElementBuilder.build());
+                                                                    parsingEighthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("type")) {
+                                                                    bleSequenceElementBuilder.setType(text);
+                                                                } else if (tagname.equalsIgnoreCase("post_delay")) {
+                                                                    bleSequenceElementBuilder.setPost_delay(text);
+                                                                }
+                                                            } else if (parsingNinthLayerSection == NL_WRITABLE_CHAR_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("writableCharacteristic")) {
+                                                                    parsingNinthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("name")) {
+                                                                    for (BLEWritableCharacteristic bleWritableCharacteristic
+                                                                            : bleWritableCharacteristics) {
+                                                                        if (bleWritableCharacteristic.getName().equalsIgnoreCase(text)) {
+                                                                            bleSequenceElementBuilder
+                                                                                    .setBleWritableCharacteristic(bleWritableCharacteristic);
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                } else if (tagname.equalsIgnoreCase("model")) {
+                                                                    bleSequenceElementBuilder.setModelWriteChar(text);
+                                                                }
+                                                            }
+                                                            /////////////
+                                                            else if (parsingNinthLayerSection == NL_READABLE_CHAR_PARSING) {
+                                                                if (tagname.equalsIgnoreCase("readableCharacteristic")) {
+                                                                    parsingNinthLayerSection = NONE_PARSING;
+                                                                } else if (tagname.equalsIgnoreCase("name")) {
+                                                                    for (BLEReadableCharacteristic bleReadableCharacteristic :
+                                                                            bleReadableCharacteristics) {
+                                                                        if (bleReadableCharacteristic.getName().equalsIgnoreCase(text)) {
+                                                                            bleSequenceElementBuilder
+                                                                                    .setBleReadableCharacteristic(bleReadableCharacteristic);
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                } else if (tagname.equalsIgnoreCase("model")) {
+                                                                    //TODO: model should be used for event related to the reception of specific message
+                                                                    // bleSequenceElementBuilder.seModelReadChar(text);
+                                                                }
+                                                            }
+                                                            /////////////////
+                                                        }
+                                                    }
+                                                } else if (parsingSixthLayerSection == SIL_INIT_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("init")) {
+                                                        parsingSixthLayerSection = NONE_PARSING;
+                                                    } else if (tagname.equalsIgnoreCase("id")) {
+                                                        initId = text;
                                                     }
                                                 }
+                                            }
+                                        } else if (parsingFourthLayerSection == FOL_INIT_MODELS_PARSING) {
+                                            if (parsingFifthLayerSection == NONE_PARSING) {
+                                                if (tagname.equalsIgnoreCase("init_models")) {
+                                                    parsingFourthLayerSection = NONE_PARSING;
+                                                }
+                                            }
 
-                                            } else if (parsingSixthLayerSection == SIL_ACTION_PARSING) {
-                                                if (parsingSeventhLayerSection == NONE_PARSING) {
-                                                    if (tagname.equalsIgnoreCase("action")) {
-                                                        bleActionsBuilders.add(bleActionBuilder);
-                                                        parsingSixthLayerSection=NONE_PARSING;
+                                            //////////
+                                            else if (parsingFifthLayerSection == FIL_INIT_PARSING) {
+                                                if (parsingSixthLayerSection == NONE_PARSING) {
+                                                    if (tagname.equalsIgnoreCase("init")) {
+                                                        bleInitsBuilders.add(bleInitBuilder);
+                                                        parsingFifthLayerSection = NONE_PARSING;
                                                     } else if (tagname.equalsIgnoreCase("id")) {
-                                                        bleActionBuilder.setId(text);
-                                                        bleActions.add(text);
+                                                        bleInitBuilder.setId(text);
                                                     } else if (tagname.equalsIgnoreCase("post_delay")) {
-                                                        bleActionBuilder.setPost_delay(text);
+                                                        bleInitBuilder.setPost_delay(text);
                                                     }
-                                                } else if (parsingSeventhLayerSection == SEL_SEQUENCE_PARSING) {
-                                                    if (parsingEighthLayerSection == NONE_PARSING) {
+                                                } else if (parsingSixthLayerSection == SIL_SEQUENCE_PARSING) {
+                                                    if (parsingSeventhLayerSection == NONE_PARSING) {
                                                         if (tagname.equalsIgnoreCase("sequence")) {
-                                                            parsingSeventhLayerSection=NONE_PARSING;
+                                                            parsingSixthLayerSection = NONE_PARSING;
                                                         }
-                                                    } else if (parsingEighthLayerSection == EL_SUB_ACTION_PARSING) {
-                                                        if (parsingNinthLayerSection == NONE_PARSING) {
+                                                    } else if (parsingSeventhLayerSection == SEL_SUB_ACTION_PARSING) {
+                                                        if (parsingEighthLayerSection == NONE_PARSING) {
                                                             if (tagname.equalsIgnoreCase("sub_action")) {
-                                                            //TODO: harmonize xml label and class names
-                                                                bleActionBuilder.addBleSequenceElement
+                                                                //TODO: harmonize xml label and class names
+                                                                bleInitBuilder.addBleSequenceElement
                                                                         (bleSequenceElementBuilder.build());
-                                                                parsingEighthLayerSection=NONE_PARSING;
+                                                                parsingSeventhLayerSection = NONE_PARSING;
                                                             } else if (tagname.equalsIgnoreCase("type")) {
                                                                 bleSequenceElementBuilder.setType(text);
                                                             } else if (tagname.equalsIgnoreCase("post_delay")) {
                                                                 bleSequenceElementBuilder.setPost_delay(text);
                                                             }
-                                                        } else if (parsingNinthLayerSection == NL_WRITABLE_CHAR_PARSING) {
+                                                        } else if (parsingEighthLayerSection == EL_WRITABLE_CHAR_PARSING) {
                                                             if (tagname.equalsIgnoreCase("writableCharacteristic")) {
-                                                                parsingNinthLayerSection=NONE_PARSING;
+                                                                parsingEighthLayerSection = NONE_PARSING;
                                                             } else if (tagname.equalsIgnoreCase("name")) {
                                                                 for (BLEWritableCharacteristic bleWritableCharacteristic
-                                                                        :bleWritableCharacteristics){
-                                                                    if (bleWritableCharacteristic.getName().equalsIgnoreCase(text)){
+                                                                        : bleWritableCharacteristics) {
+                                                                    if (bleWritableCharacteristic.getName().equalsIgnoreCase(text)) {
                                                                         bleSequenceElementBuilder
                                                                                 .setBleWritableCharacteristic(bleWritableCharacteristic);
                                                                         break;
@@ -1194,15 +1266,13 @@ public class DevicesDescriptorNew {
                                                             } else if (tagname.equalsIgnoreCase("model")) {
                                                                 bleSequenceElementBuilder.setModelWriteChar(text);
                                                             }
-                                                        }
-                                                        /////////////
-                                                        else if (parsingNinthLayerSection == NL_READABLE_CHAR_PARSING) {
+                                                        } else if (parsingEighthLayerSection == EL_READABLE_CHAR_PARSING) {
                                                             if (tagname.equalsIgnoreCase("readableCharacteristic")) {
-                                                                parsingNinthLayerSection=NONE_PARSING;
+                                                                parsingEighthLayerSection = NONE_PARSING;
                                                             } else if (tagname.equalsIgnoreCase("name")) {
-                                                                for (BLEReadableCharacteristic bleReadableCharacteristic:
-                                                                        bleReadableCharacteristics){
-                                                                    if (bleReadableCharacteristic.getName().equalsIgnoreCase(text)){
+                                                                for (BLEReadableCharacteristic bleReadableCharacteristic :
+                                                                        bleReadableCharacteristics) {
+                                                                    if (bleReadableCharacteristic.getName().equalsIgnoreCase(text)) {
                                                                         bleSequenceElementBuilder
                                                                                 .setBleReadableCharacteristic(bleReadableCharacteristic);
                                                                         break;
@@ -1213,105 +1283,33 @@ public class DevicesDescriptorNew {
                                                                 // bleSequenceElementBuilder.seModelReadChar(text);
                                                             }
                                                         }
-                                                        /////////////////
                                                     }
                                                 }
-                                            } else if (parsingSixthLayerSection == SIL_INIT_PARSING) {
-                                                if (tagname.equalsIgnoreCase("init")) {
-                                                    parsingSixthLayerSection=NONE_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("id")) {
-                                                    initId=text;
-                                                }
                                             }
-                                        }
-                                    } else if (parsingFourthLayerSection==FOL_INIT_MODELS_PARSING){
-                                        if (parsingFifthLayerSection==NONE_PARSING){
-                                            if (tagname.equalsIgnoreCase("init_models")){
-                                                parsingFourthLayerSection=NONE_PARSING;
-                                            }
-                                        }
+                                            //////////
 
-                                        //////////
-                                        else if (parsingFifthLayerSection == FIL_INIT_PARSING) {
-                                            if (parsingSixthLayerSection == NONE_PARSING) {
-                                                if (tagname.equalsIgnoreCase("init")) {
-                                                    bleInitsBuilders.add(bleInitBuilder);
-                                                    parsingFifthLayerSection=NONE_PARSING;
-                                                } else if (tagname.equalsIgnoreCase("id")) {
-                                                    bleInitBuilder.setId(text);
-                                                } else if (tagname.equalsIgnoreCase("post_delay")) {
-                                                    bleInitBuilder.setPost_delay(text);
-                                                }
-                                            } else if (parsingSixthLayerSection == SIL_SEQUENCE_PARSING) {
-                                                if (parsingSeventhLayerSection == NONE_PARSING) {
-                                                    if (tagname.equalsIgnoreCase("sequence")) {
-                                                        parsingSixthLayerSection=NONE_PARSING;
-                                                    }
-                                                } else if (parsingSeventhLayerSection == SEL_SUB_ACTION_PARSING) {
-                                                    if (parsingEighthLayerSection == NONE_PARSING) {
-                                                        if (tagname.equalsIgnoreCase("sub_action")) {
-                                                            //TODO: harmonize xml label and class names
-                                                            bleInitBuilder.addBleSequenceElement
-                                                                    (bleSequenceElementBuilder.build());
-                                                            parsingSeventhLayerSection=NONE_PARSING;
-                                                        } else if (tagname.equalsIgnoreCase("type")) {
-                                                            bleSequenceElementBuilder.setType(text);
-                                                        } else if (tagname.equalsIgnoreCase("post_delay")) {
-                                                            bleSequenceElementBuilder.setPost_delay(text);
-                                                        }
-                                                    } else if (parsingEighthLayerSection == EL_WRITABLE_CHAR_PARSING) {
-                                                        if (tagname.equalsIgnoreCase("writableCharacteristic")) {
-                                                            parsingEighthLayerSection=NONE_PARSING;
-                                                        } else if (tagname.equalsIgnoreCase("name")) {
-                                                            for (BLEWritableCharacteristic bleWritableCharacteristic
-                                                                    :bleWritableCharacteristics){
-                                                                if (bleWritableCharacteristic.getName().equalsIgnoreCase(text)){
-                                                                    bleSequenceElementBuilder
-                                                                            .setBleWritableCharacteristic(bleWritableCharacteristic);
-                                                                    break;
-                                                                }
-                                                            }
-                                                        } else if (tagname.equalsIgnoreCase("model")) {
-                                                            bleSequenceElementBuilder.setModelWriteChar(text);
-                                                        }
-                                                    } else if (parsingEighthLayerSection == EL_READABLE_CHAR_PARSING) {
-                                                        if (tagname.equalsIgnoreCase("readableCharacteristic")) {
-                                                            parsingEighthLayerSection=NONE_PARSING;
-                                                        } else if (tagname.equalsIgnoreCase("name")) {
-                                                            for (BLEReadableCharacteristic bleReadableCharacteristic:
-                                                                    bleReadableCharacteristics){
-                                                                if (bleReadableCharacteristic.getName().equalsIgnoreCase(text)){
-                                                                    bleSequenceElementBuilder
-                                                                            .setBleReadableCharacteristic(bleReadableCharacteristic);
-                                                                break;
-                                                                }
-                                                            }
-                                                        } else if (tagname.equalsIgnoreCase("model")) {
-                                                            //TODO: model should be used for event related to the reception of specific message
-                                                            // bleSequenceElementBuilder.seModelReadChar(text);
-                                                        }
-                                                    }
-                                                }
-                                            }
                                         }
-                                        //////////
-
                                     }
                                 }
                             }
-                        }
-                        text=null;
-                        break;
+                            text = null;
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
+                    eventType = parser.next();
                 }
-                eventType = parser.next();
             }
+        } catch (FileNotFoundException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
+            e.printStackTrace();
         } catch (XmlPullParserException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             Log.d(TAG, "Text is: "+text);
             e.printStackTrace();
         } catch (IOException e) {
+            BLEContext.displayToastOnMainActivity(e.getMessage());
             e.printStackTrace();
         }
 

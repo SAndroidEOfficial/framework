@@ -30,6 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import eu.angel.bleembedded.lib.BLEContext;
+import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
 import eu.angel.bleembedded.lib.data.BLEBeaconData;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.alarm.BLEAlarm;
@@ -47,7 +48,7 @@ import eu.angel.bleembedded.lib.item.generalIO.BLEOnGeneralIOEventListener;
 
 
 @SuppressLint({ "NewApi", "ServiceCast" })
-public class MainActivityResearcherNight extends Activity {
+public class MainActivityResearcherNight extends SandroideBaseActivity {
 
     // TODO: 19/10/16 delete unusued
     protected static final String TAG = "MainActivityTesiGM";
@@ -128,10 +129,6 @@ public class MainActivityResearcherNight extends Activity {
 			ARDUINO_ITEM_SHIELD_SUFFIX="rbs";
 		else if(lapisShield)
 			ARDUINO_ITEM_SHIELD_SUFFIX="lapis";
-
-		BLEContext.initBLE(this);
-        //context=this;
-
 
 		if(TIenabled) {
 			remoteLockEnable = (BLEButton) BLEContext.findViewById("remote_key_button1");
