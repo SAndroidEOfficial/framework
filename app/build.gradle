@@ -5,7 +5,7 @@ apply plugin: 'com.android.application'
         buildToolsVersion '23.0.3'
 
         defaultConfig{
-            applicationId "eu.angel.bleembedded.test"
+            applicationId "it.unibs.sandroide.test"
             minSdkVersion 19
             targetSdkVersion 23
             versionCode 1
@@ -37,5 +37,4 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile project(':library')
-    compile project(':fliclib')
 }

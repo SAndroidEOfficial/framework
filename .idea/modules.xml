@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/flasher/flasher.iml" filepath="$PROJECT_DIR$/flasher/flasher.iml" />
-      <module fileurl="file://$PROJECT_DIR$/fliclib/fliclib.iml" filepath="$PROJECT_DIR$/fliclib/fliclib.iml" />
       <module fileurl="file://$PROJECT_DIR$/framework.iml" filepath="$PROJECT_DIR$/framework.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
     </modules>

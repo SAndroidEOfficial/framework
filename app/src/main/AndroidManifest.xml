@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="eu.angel.bleembedded">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="it.unibs.sandroide">
 
 
     <uses-sdk
@@ -9,9 +9,9 @@
 
     <application android:allowBackup="true" android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
-        android:name="eu.angel.bleembedded.lib.activities.SandroideApplication">
+        android:name="it.unibs.sandroide.lib.activities.SandroideApplication">
 
-        <activity android:name="eu.angel.bleembedded.test.MainActivityBeacon"
+        <activity android:name="it.unibs.sandroide.test.MainActivityBeacon"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +20,7 @@
         </activity>
 
 
-        <activity android:name="eu.angel.bleembedded.lib.beacon.ui.BeaconTagActivity"
+        <activity android:name="it.unibs.sandroide.lib.beacon.ui.BeaconTagActivity"
             android:label="Beacon Tagging">
         </activity>
 
