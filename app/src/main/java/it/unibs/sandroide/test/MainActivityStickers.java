@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Nearable;
@@ -19,9 +20,9 @@ import java.util.List;
 
 import it.unibs.sandroide.R;
 import it.unibs.sandroide.lib.activities.SandroideBaseActivity;
+import it.unibs.sandroide.lib.beacon.BeaconTags;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgBase;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgNearable;
-import it.unibs.sandroide.lib.beacon.BeaconTags;
 import it.unibs.sandroide.lib.beacon.notifier.TagMonitorNotifier;
 import it.unibs.sandroide.lib.beacon.notifier.TagRangeNotifier;
 
@@ -29,8 +30,8 @@ import it.unibs.sandroide.lib.beacon.notifier.TagRangeNotifier;
  * Created by giova on 11/01/2017.
  */
 
-public class MainActivityBeacon extends SandroideBaseActivity implements BeaconConsumer {
-    protected static final String TAG = "MainActivityBeacon";
+public class MainActivityStickers extends SandroideBaseActivity implements BeaconConsumer {
+    protected static final String TAG = "MainActivityStickers";
     private BeaconManager beaconManager;
 
     private ArrayList<String> logLines = new ArrayList<String>();
@@ -38,12 +39,22 @@ public class MainActivityBeacon extends SandroideBaseActivity implements BeaconC
     private ArrayAdapter logLinesAdapter;
     private com.estimote.sdk.BeaconManager estBeaconManager;
     private String scanId;
+    private TextView tvX1,tvY1,tvZ1,tvX2,tvY2,tvZ2,tvTemp1,tvTemp2;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_beacon);
+        setContentView(R.layout.activity_stickers);
+
+        tvX1 = (TextView) findViewById(R.id.tvX1);
+        tvX2 = (TextView) findViewById(R.id.tvX2);
+        tvY1 = (TextView) findViewById(R.id.tvY1);
+        tvY2 = (TextView) findViewById(R.id.tvY2);
+        tvZ1 = (TextView) findViewById(R.id.tvZ1);
+        tvZ2 = (TextView) findViewById(R.id.tvZ2);
+        tvTemp1 = (TextView) findViewById(R.id.tvTemp1);
+        tvTemp2 = (TextView) findViewById(R.id.tvTemp2);
 
         mLogList=(ListView) findViewById(R.id.logList);
         logLinesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, logLines);
@@ -72,10 +83,21 @@ public class MainActivityBeacon extends SandroideBaseActivity implements BeaconC
 
         estBeaconManager= new com.estimote.sdk.BeaconManager(this);
         estBeaconManager.setNearableListener(new com.estimote.sdk.BeaconManager.NearableListener() {
-            @Override public void onNearablesDiscovered(List<Nearable> nearables) {
+            @Override public void onNearablesDiscovered(final List<Nearable> nearables) {
                 String str = "";
                 for (int i=0;i<nearables.size(); i++) {
                     addLogLine(String.format("%d Discovered nearables:\t%s\t%s\t%s", i, nearables.get(i).xAcceleration, nearables.get(i).yAcceleration, nearables.get(i).zAcceleration));
+                    final Double x=nearables.get(i).xAcceleration,y=nearables.get(i).yAcceleration,z=nearables.get(i).zAcceleration,temp= Double.valueOf(Math.round(nearables.get(i).temperature));
+                    runOnUiThread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          tvX1.setText(x.toString());
+                                          tvY1.setText(y.toString());
+                                          tvZ1.setText(z.toString());
+                                          tvTemp1.setText(temp.toString());
+                                      }
+                                  });
+
                     //Log.i("MainActivity", String.format("%d Discovered nearables:\t%s\t%s\t%s", i, nearables.get(i).xAcceleration, nearables.get(i).yAcceleration, nearables.get(i).zAcceleration));
                     //double accell = nearables.get(i).xAcceleration*nearables.get(i).yAcceleration*nearables.get(i).zAcceleration;
                     //str += String.format(" %f",accell);
@@ -136,8 +158,22 @@ public class MainActivityBeacon extends SandroideBaseActivity implements BeaconC
 
                 BeaconMsgBase beac = new BeaconMsgNearable(b).parse();
                 if (beac!=null) {
+                    BeaconMsgNearable near = (BeaconMsgNearable) beac;
                     addLogLine(String.format("Found my nearable: %s",beac.toString()));
                     Log.i("MainActivityBeacon",String.format("Found my nearable: %s",beac.toString()));
+
+                    final Double x=((BeaconMsgNearable) beac).getAccellX(),y=((BeaconMsgNearable) beac).getAccellY(),z=((BeaconMsgNearable) beac).getAccellZ(),temp= Double.valueOf(Math.round(((BeaconMsgNearable) beac).getTemp()));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvX2.setText(x.toString());
+                            tvY2.setText(y.toString());
+                            tvZ2.setText(z.toString());
+                            tvTemp2.setText(temp.toString());
+                        }
+                    });
+
+
                 } else {
                     addLogLine(String.format("This is not a nearable message: %s",b.getKeyIdentifier()));
                     Log.e("MainActivityBeacon",String.format("This is not a nearable message: %s",b.getKeyIdentifier()));
