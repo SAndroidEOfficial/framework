@@ -44,7 +44,8 @@ allprojects {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'org.altbeacon:android-beacon-library:2.8.1'
+    //compile 'org.altbeacon:android-beacon-library:2.8.1'
+    compile 'org.altbeacon:android-beacon-library:2.9.2'  // 2.9.2 replaces setBeaconRange with addBeaconRange
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     //compile 'com.nosolojava.fsm.android:scxml-android-lib'
     //compile 'org.apache.commons:commons-jexl:2.1.1'

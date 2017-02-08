@@ -9,9 +9,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/beacon_app" />
-            <option value="$PROJECT_DIR$/beacon_config" />
-            <option value="$PROJECT_DIR$/beacon_transmitter" />
             <option value="$PROJECT_DIR$/flasher" />
             <option value="$PROJECT_DIR$/fliclib" />
             <option value="$PROJECT_DIR$/library" />

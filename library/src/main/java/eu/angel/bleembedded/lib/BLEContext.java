@@ -43,7 +43,6 @@ import java.util.List;
 
 import eu.angel.bleembedded.lib.activities.SandroideApplication;
 import eu.angel.bleembedded.lib.activities.SandroideBaseActivity;
-import eu.angel.bleembedded.lib.beacon.BLEBeaconManager;
 import eu.angel.bleembedded.lib.device.DevicesManager;
 import eu.angel.bleembedded.lib.item.BLEItem;
 import eu.angel.bleembedded.lib.item.BLEItemDescriptor;
@@ -513,14 +512,4 @@ public class BLEContext {
 	public static void onResume()
 	{
 	}
-
-	/**
-	 * This method shall to be inserted in the onDestroy() callback of the Activity
-	 * to allow the  proper handling of the resources
-	 */
-	public static void onDestroy()
-	{
-		BLEBeaconManager.onDestroy();
-	}
-	//endregion
 }

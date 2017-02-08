@@ -3,9 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/beacon_app/beacon_app.iml" filepath="$PROJECT_DIR$/beacon_app/beacon_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/beacon_config/beacon_config.iml" filepath="$PROJECT_DIR$/beacon_config/beacon_config.iml" />
-      <module fileurl="file://$PROJECT_DIR$/beacon_transmitter/beacon_transmitter.iml" filepath="$PROJECT_DIR$/beacon_transmitter/beacon_transmitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/flasher/flasher.iml" filepath="$PROJECT_DIR$/flasher/flasher.iml" />
       <module fileurl="file://$PROJECT_DIR$/fliclib/fliclib.iml" filepath="$PROJECT_DIR$/fliclib/fliclib.iml" />
       <module fileurl="file://$PROJECT_DIR$/framework.iml" filepath="$PROJECT_DIR$/framework.iml" />

@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import org.altbeacon.beacon.BeaconManager;
+
 import eu.angel.bleembedded.lib.BLEContext;
 
 /**
