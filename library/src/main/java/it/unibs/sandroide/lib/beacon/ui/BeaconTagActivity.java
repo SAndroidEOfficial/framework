@@ -22,10 +22,10 @@
 
 package it.unibs.sandroide.lib.beacon.ui;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -172,7 +172,7 @@ public class BeaconTagActivity extends SandroideBaseActivity implements BeaconCo
 
     public void renderTabs() {
         // create tabs, attach pager & tab listener
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Create a tab listener that is called when the user changes tabs.

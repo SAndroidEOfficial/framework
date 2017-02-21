@@ -3,6 +3,7 @@ package it.unibs.sandroide.lib.activities;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import it.unibs.sandroide.lib.BLEContext;
@@ -11,7 +12,7 @@ import it.unibs.sandroide.lib.BLEContext;
  * Created by giova on 09/01/2017.
  */
 
-public class SandroideBaseActivity extends Activity {
+public class SandroideBaseActivity extends AppCompatActivity {
 
     public static final int PERMISSIONS_FOR_SANDROIDE = 1;
 
