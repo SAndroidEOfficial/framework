@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="eu.angel.bleembedded.lib"
+    package="it.unibs.sandroide.lib"
     android:versionCode="1"
     android:versionName="0.1">
 

@@ -3,6 +3,66 @@
 
 	<device>
 		<!-- has to match the 'device name' characteristic of the GAP -->
+		<deviceType>FlicButton</deviceType>
+		<!-- used as bleItem name prefix to distinguish from the ones of other devs -->
+		<nickname>flic</nickname>
+		<!-- ble services and characteristics fournished by the dev  -->
+		<ble>
+
+			<service>
+				<name>simple_key_service</name>
+				<uuid>0000ffe0-0000-1000-8000-00805f9b34fb</uuid>
+				<characteristics>
+					<characteristic>
+						<name>key_press_state</name>
+						<uuid>0000ffe1-0000-1000-8000-00805f9b34fb</uuid>
+						<readable>
+							<parser>
+								<parser_id>TI_BUTTON</parser_id>
+								<rootitem></rootitem>
+							</parser>
+						</readable>
+					</characteristic>
+				</characteristics>
+			</service>
+
+		</ble>
+
+		<!-- abstraction used by the library -->
+		<items>
+			<!-- rootItems which may contein 'subItems' used by the library -->
+			<rootitem>
+				<name></name>
+
+				<!-- TODO: add more subItems which has name and bletype,
+				they will be inherited by the related Item sons -->
+				<subitems>
+					<item>
+						<name>flicbutton</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_button</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>simple_key_service</name>
+							<characteristic>key_press_state</characteristic>
+						</service>
+
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>key_press_state</name>
+							<dataCluster>butt_ti1</dataCluster>
+						</readableCharacteristic>
+					</item>
+				</subitems>
+			</rootitem>
+		</items>
+	</device>
+
+
+	<device>
+		<!-- has to match the 'device name' characteristic of the GAP -->
 		<deviceType>BlueNRG</deviceType>
 		<!-- used as bleItem name prefix to distinguish from the ones of other devs -->
 		<nickname>nrg</nickname>

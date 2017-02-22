@@ -1,1 +1,1 @@
-include ':library', ':flasher', ':app', ':beacon_app', ':beacon_transmitter', ':beacon_config', ':fliclib'
+include ':library', ':flasher', ':app'
