@@ -1,0 +1,146 @@
+{
+    "auth":{
+      "type":"oauth2",  // oauth2 type will launch webview or the browser
+      "url":"https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=[oauth2_clientid]&redirect_uri=[redirect_uri]&expires_in=[expires_in]&scope=[scope]"
+    },
+    "daily_activity_summary": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/activities/date/[date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_time_series": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/[resource-path]/date/[base-date]/[end-date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_intraday_time_series": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/-/[resource-path]/date/[date]/[date]/[detail-level]/time/[start-time]/[end-time].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_logs_list": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/-/activities/list.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_types": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/activities.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "get_activity": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/activities/[activity-id].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_goals": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/activities/goals/[period].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "activity_lifetime": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/activities.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "body_fat_logs": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/body/log/fat/date/[base-date]/[end-date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "body_time_series": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/body/[resource-path]/date/[base-date]/[end-date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "body_goals": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/body/log/[goal-type]/goal.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "weight_logs": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/body/log/weight/date/[base-date]/[end-date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "devices": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/-/devices.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "heartrate": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/activities/heart/date/[date]/[period].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "heartrate_intraday": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/-/activities/heart/date/[date]/[end-date]/[detail-level].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "heartrate_intraday_with_time": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/-/activities/heart/date/[date]/[end-date]/[detail-level]/time/[start-time]/[end-time].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "friends": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/friends.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "sleep_logs": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/sleep/date/[date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "sleep_time_series": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/[resource-path]/date/[base-date]/[end-date].json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    },
+    "user_profile": {
+      "method":"GET",
+      "url":"https://api.fitbit.com/1/user/[user-id]/profile.json", //values between parenthesis are variables to be replaced
+      "headers":{
+        "Authorization":"Bearer [auth.access_token]"
+      }
+    }
+}

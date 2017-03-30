@@ -34,8 +34,21 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 import it.unibs.sandroide.lib.activities.SandroideApplication;
@@ -319,6 +332,28 @@ public class BLEContext {
 	}
 
 	/**
+	 * Initialization of the library from service.
+	 *
+	 */
+	public static void initBLE()
+	{
+		permissionsGranted = true; // TOFIX: this is for service
+
+	}
+
+	/**
+	 * Initialization of the library from service.
+	 *
+	 */
+	public static void initBLE(Context context)
+	{
+		permissionsGranted = true; // TOFIX: this is for service
+		if (BLEContext.context == null) { // check if not already called
+			BLEContext.context = context;
+		}
+	}
+
+	/**
 	 * Initialization of the library.
 	 *
 	 * @param context needed to handle the Android resources such as Bluetooth, storage ...
@@ -510,4 +545,53 @@ public class BLEContext {
 	public static void onResume()
 	{
 	}
+
+
+	public static JSONObject allRestApis = new JSONObject();
+
+	public static JSONObject findRestApi(String apiName) {
+		JSONObject ret=null;
+		if (allRestApis==null || !allRestApis.has(apiName)) {
+			// Load Rest APIs from JSON/XML files
+			int resid = context.getResources().getIdentifier(apiName,"raw",context.getPackageName());
+			//InputStream is = context.getResources().openRawResource(R.raw.rest_apis);
+			InputStream is = context.getResources().openRawResource(resid);
+
+			Writer writer = new StringWriter();
+			char[] buffer = new char[1024];
+			try {
+				Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				int n;
+				try {
+					while ((n = reader.read(buffer)) != -1) {
+						writer.write(buffer, 0, n);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				allRestApis.put(apiName,new JSONObject(writer.toString()));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			ret = allRestApis.getJSONObject(apiName);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
 }
