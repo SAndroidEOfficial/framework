@@ -140,22 +140,24 @@ public class BLEContext {
 	}
 
 	public static void startFlicManager() {
-		if (!flicInitialized && isFlicAppInstalled()) {
-			flicInitialized=true;
-			FlicManager.setAppCredentials("sandroide", "sandroide", "SAndroidE");
-			FlicManager.getInstance(context, new FlicManagerInitializedCallback() {
-				@Override
-				public void onInitialized(FlicManager manager) {
-					Log.d(TAG, "FlicManager initialized");
-					BLEContext.flicManager = manager;
+		if (isFlicAppInstalled()) {
+			if (!flicInitialized) {
+				flicInitialized = true;
+				FlicManager.setAppCredentials("sandroide", "sandroide", "SAndroidE");
+				FlicManager.getInstance(context, new FlicManagerInitializedCallback() {
+					@Override
+					public void onInitialized(FlicManager manager) {
+						Log.d(TAG, "FlicManager initialized");
+						BLEContext.flicManager = manager;
 
-					for(BLEItem item : mbleItems){
-						if (item.getType()==BLEItem.TYPE_BUTTON) {
-							((BLEButton) item).onFlicManagerInitialized();
+						for (BLEItem item : mbleItems) {
+							if (item.getType() == BLEItem.TYPE_BUTTON) {
+								((BLEButton) item).onFlicManagerInitialized();
+							}
 						}
 					}
-				}
-			});
+				});
+			}
 		} else {
 			Log.i(TAG, "Flic app is not installed. Flic devices won\'t work until Flic app installation. Please check out \"io.flic.app\" on Google Play Store.");
 		}

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import org.altbeacon.beacon.BeaconManager;
+
 /**
  * Created by giova on 11/01/2017.
  */
@@ -11,6 +13,7 @@ import android.os.Bundle;
 public class SandroideApplication extends Application implements  Application.ActivityLifecycleCallbacks {
 
     public static Activity CurrentActivity = null;
+    public static BeaconManager beaconManager = null;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ public class SandroideApplication extends Application implements  Application.Ac
     public void onCreate() {
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
     }
 
     @Override

@@ -11,8 +11,9 @@
         android:icon="@mipmap/ic_launcher"
         android:name="it.unibs.sandroide.lib.activities.SandroideApplication">
 
-        <activity android:name="it.unibs.sandroide.test.MainActivityStickers"
-            android:label="@string/app_name">
+        <activity android:name="it.unibs.sandroide.test.RunServiceActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,9 +22,15 @@
 
 
         <activity android:name="it.unibs.sandroide.lib.beacon.ui.BeaconTagActivity"
+            android:theme="@style/Base.Theme.AppCompat"
             android:label="Beacon Tagging">
         </activity>
 
+        <activity android:name="it.unibs.sandroide.lib.item.restapi.Oauth2Activity"
+            android:label="API OAuth2">
+        </activity>
+
+        <service android:name=".test.LogService"/>
 
     </application>
 
