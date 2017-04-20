@@ -44,6 +44,7 @@ import org.json.JSONException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import it.unibs.sandroide.lib.activities.SandroideApplication;
 import it.unibs.sandroide.lib.activities.SandroideBaseActivity;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgAltBeacon;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgBase;
@@ -88,7 +89,7 @@ public class BeaconTagActivity extends SandroideBaseActivity implements BeaconCo
         lvTags.setAdapter(BeaconTags.getInstance().getTagsListAdapter());
 
         // start beacon monitoring
-        beaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
+        beaconManager = SandroideApplication.beaconManager; //BeaconManager.getInstanceForApplication(this.getApplicationContext());
         try {
             // load tagged beacons from shared preferences
             BeaconTags.getInstance().load(this);
