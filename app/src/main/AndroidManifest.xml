@@ -30,6 +30,14 @@
             android:label="API OAuth2">
         </activity>
 
+        <activity android:name=".test.MainActivityFitbitApi"
+            android:theme="@style/Base.Theme.AppCompat">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service android:name=".test.LogService"/>
 
     </application>

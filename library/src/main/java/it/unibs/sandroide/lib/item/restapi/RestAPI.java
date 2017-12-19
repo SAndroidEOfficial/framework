@@ -1,16 +1,16 @@
 /**
  * Copyright (c) 2016 University of Brescia, Alessandra Flammini, All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,7 @@
  */
 
 package it.unibs.sandroide.lib.item.restapi;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,29 +36,25 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import it.unibs.sandroide.lib.BLEContext;
-import it.unibs.sandroide.lib.R;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class RestAPI {
-    private static List<String> apiList = null;
     private SharedPreferences sharedPref;
     private Context context;
     private String apiName;
-    private Map<String,OnApiCallListener> mapListeners;
+    private Map<String, OnApiCallListener> mapListeners;
     private JSONObject api,              // contains api description from JSON
-                       apiConfig = null; // contains configuration parameteters: app id, session token, ecc...
-    boolean reloadSharedPrefOnNextCall=false;
+            apiConfig = null; // contains configuration parameteters: app id, session token, ecc...
+    boolean reloadSharedPrefOnNextCall = false;
+    public final static String HAS_EXTRA_LABEL = "hasExtra";
 
     public RestAPI(Context ctx, String name, JSONObject config) {
         mapListeners = new HashMap<>();
@@ -79,35 +76,36 @@ public class RestAPI {
             }
         }
 
-        sharedPref.edit().putString("apiConfig",apiConfig.toString()).commit();
-    }
-
-    public void setOnApiCallListener(String callId, OnApiCallListener listener) {
-        mapListeners.put(callId,listener);
-    }
-
-    public void runApiCall(String callId, JSONObject params) {
-        if (mapListeners.containsKey(callId)) {
-            runApiCall(callId,params,mapListeners.get(callId));
-        } else {
-            throw new RuntimeException(String.format("You must first set Listener for call \"%s\"",callId));
-        }
+        sharedPref.edit().putString("apiConfig", apiConfig.toString()).apply();
     }
 
     public void authenticate() {
         reloadSharedPrefOnNextCall = true;
         Intent intent = new Intent(context, Oauth2Activity.class);
+        intent.putExtra(HAS_EXTRA_LABEL, true);
         intent.putExtra("sharedPrefId",apiName);
         intent.putExtra("callId","auth");
         intent.putExtra("api",api.toString());
         context.startActivity(intent);
     }
 
+    public void setOnApiCallListener(String callId, OnApiCallListener listener) {
+        mapListeners.put(callId, listener);
+    }
+
+    public void runApiCall(String callId, JSONObject params) {
+        if (mapListeners.containsKey(callId)) {
+            runApiCall(callId, params, mapListeners.get(callId));
+        } else {
+            throw new RuntimeException(String.format("You must first set Listener for call \"%s\"", callId));
+        }
+    }
+
     public void runApiCall(String callId, JSONObject params, OnApiCallListener listener) {
         if (reloadSharedPrefOnNextCall) reloadConfigFromSharedPref();
 
         // we create a task because network operations must be performed in background, not UI thread
-        new submitApiTask().execute(callId,params,listener);
+        new submitApiTask().execute(callId, params, listener);
     }
 
     protected class submitApiTask extends AsyncTask<Object, Void, JSONObject> {
@@ -120,7 +118,7 @@ public class RestAPI {
 
         @Override
         protected JSONObject doInBackground(Object... params) {
-            if (params.length==3) {
+            if (params.length == 3) {
                 String callId = (String) params[0];
                 JSONObject callParams = (JSONObject) params[1];
                 listener = (OnApiCallListener) params[2];
@@ -134,19 +132,10 @@ public class RestAPI {
         @Override
         protected void onPostExecute(JSONObject result) {
             int status = -1;
-            if (result!=null) {
-                status = result.optInt("status",400);
-                switch(status) {
-                    case 200:
-                        listener.onResult(status,result.optString("body",""));
-                        break;
-                    case 400:
-                    case 401:
-                        authenticate();
-                        break;
-                    default:
-                        listener.onResult(status,result.optString("body",""));
-                }
+            if (result != null) {
+                status = result.optInt("status", 400);
+                String bodyResult = result.optString("body", "");
+                listener.onResult(status, bodyResult);
             } else {
                 throw new RuntimeException("Api Response result not implemented!");
             }
@@ -174,20 +163,20 @@ public class RestAPI {
             StringBuilder total = new StringBuilder();
 
             // replace methodparameters
-            JSONObject apiCall = new JSONObject(replaceCallParameters(api.getJSONObject(apiCallId).toString(),methodParameters));
+            JSONObject apiCall = new JSONObject(replaceCallParameters(api.getJSONObject(apiCallId).toString(), methodParameters));
 
             // configure url connection
             URL url = new URL(apiCall.getString("url"));
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod(apiCall.optString("method","GET"));
+            urlConnection.setRequestMethod(apiCall.optString("method", "GET"));
 
             // set headers
             JSONObject headers = apiCall.optJSONObject("headers");
-            if (headers!=null) {
+            if (headers != null) {
                 Iterator<String> keys = headers.keys();
                 while (keys.hasNext()) {
                     String k = keys.next();
-                    urlConnection.setRequestProperty(k,headers.optString(k,""));
+                    urlConnection.setRequestProperty(k, headers.optString(k, ""));
                 }
             }
 
@@ -199,11 +188,11 @@ public class RestAPI {
                 while ((line = r.readLine()) != null) {
                     total.append(line);
                 }
-                ret.put("status",urlConnection.getResponseCode())
-                    .put("body",total.toString());
+                ret.put("status", urlConnection.getResponseCode())
+                        .put("body", total.toString());
             } catch (FileNotFoundException e) {
-                ret.put("status",urlConnection.getResponseCode())
-                        .put("body",urlConnection.getResponseMessage());
+                ret.put("status", urlConnection.getResponseCode())
+                        .put("body", urlConnection.getResponseMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -216,12 +205,12 @@ public class RestAPI {
         return ret;
     }
 
-    protected static String replaceCallParameters(String old, JSONObject params){
-        params = params==null?new JSONObject():params;
+    protected static String replaceCallParameters(String old, JSONObject params) {
+        params = params == null ? new JSONObject() : params;
         Iterator<String> keys = params.keys();
         while (keys.hasNext()) {
             String k = keys.next();
-            old = old.replaceAll("\\["+k+"\\]",params.optString(k,""));
+            old = old.replaceAll("\\[" + k + "\\]", params.optString(k, ""));
         }
         return old;
     }
