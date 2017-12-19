@@ -109,7 +109,7 @@ public class Oauth2Activity extends Activity {
         @Override
         protected void onPostExecute(JSONObject result) {
             if (result == null)
-                authPageWithChromeTabs(); // chrome tabs auth currently does not work
+                authPageWithChromeTabs();
             progressDialog.dismiss();
         }
     }
