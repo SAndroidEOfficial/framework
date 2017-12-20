@@ -61,6 +61,7 @@ public class RestAPI {
 
         context = ctx;
         apiName = name;
+        BLEContext.initBLE(context);
         api = BLEContext.findRestApi(name);
         sharedPref = context.getSharedPreferences(apiName, MODE_PRIVATE);
         apiConfig = reloadConfigFromSharedPref();
