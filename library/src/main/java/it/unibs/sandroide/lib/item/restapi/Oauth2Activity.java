@@ -24,12 +24,10 @@ package it.unibs.sandroide.lib.item.restapi;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.customtabs.CustomTabsIntent;
@@ -49,12 +47,13 @@ public class Oauth2Activity extends Activity {
     private JSONObject api = new JSONObject();
     private String fitUrl;
     private final static String CALLBACK_URL = "sandroide-oauth://";
+    private boolean authPageLaunched;
 
     @SuppressLint({"NewApi", "NewApi", "NewApi"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        authPageLaunched = false;
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                     .permitAll().build();
@@ -73,8 +72,10 @@ public class Oauth2Activity extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            new loginTask().execute();
-        }
+
+            authPageWithChromeTabs();
+        } else
+            finish();
     }
 
 
@@ -88,48 +89,41 @@ public class Oauth2Activity extends Activity {
         return old;
     }
 
-
-    public class loginTask extends AsyncTask<JSONObject, Void, JSONObject> {
-
-        ProgressDialog progressDialog = null;
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(context, "Please wait",
-                    "Loading please wait..", true);
-            progressDialog.setCancelable(true);
-
-        }
-
-        @Override
-        protected JSONObject doInBackground(JSONObject... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject result) {
-            if (result == null)
-                authPageWithChromeTabs();
-            progressDialog.dismiss();
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Se l'activity si sta per chiudere allora ha visualizzato la pagina di auth
+        authPageLaunched = true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Se la pagina auth l'ho visualizzata ma non ho ricevuto alcun intent -> l'utente ha schiacciato il tasto back senza fare autorizzazione.
+        //-> chiudo l'activity
+        if (authPageLaunched && getIntent().getData() == null) {
+            finish();
+        }
+    }
 
     private void authPageWithChromeTabs() {
         try {
             fitUrl = replaceCallParameters(api.getJSONObject(callId).getString("url"), apiConfig);
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(this, Uri.parse(fitUrl));
+            customTabsIntent.launchUrl(context, Uri.parse(fitUrl));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
+
             Uri uriData = intent.getData();
             if (uriData != null && uriData.toString().startsWith(CALLBACK_URL)) {
                 String urlCallback = uriData.toString();
@@ -144,25 +138,28 @@ public class Oauth2Activity extends Activity {
                         apiConfig.put(callId + "." + key, newurl.getQueryParameter(key));
                     } catch (JSONException e) {
                     }
-                    switch (key) {
-                        case "access_token":
-                            access_token = newurl.getQueryParameter(key);
-                            break;
-                        default:
-                            break;
+
+                    if (key.equals("access_token")) {
+                        access_token = newurl.getQueryParameter(key);
+                        // access_token is standard in Oauth2 RFC, thus it is always present when authentication succeeds
+                        if (access_token.length() > 0) {
+                            sharedPref.edit().putString("apiConfig", apiConfig.toString()).apply();
+                        }
+                        break;
+                    } else if (key.equals("error_description")) {
+                        //In caso di errore rimuoviamo le info di configurazione salvate
+                        sharedPref.edit().remove("apiConfig").apply();
+                        break;
                     }
+
                 }
-
-
-                // access_token is standard in Oauth2 RFC, thus it is always present when authentication succeeds
-                if (access_token.length() > 0) {
-                    sharedPref.edit().putString("apiConfig", apiConfig.toString()).apply();
-                }
-
             }
+
+            setResult(RESULT_OK, intent);
         }
         finish();
     }
+
 
 
 }
