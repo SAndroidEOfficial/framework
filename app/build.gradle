@@ -36,6 +36,6 @@ allprojects {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':library')
+    api project(':library')
     compile 'com.estimote:sdk:0.15.0@aar'
 }
