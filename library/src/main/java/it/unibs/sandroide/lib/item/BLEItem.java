@@ -56,6 +56,7 @@ public abstract class BLEItem {
 	public static final int TYPE_SENSOR_HUMIDITY = 9;
 	public static final int TYPE_GENERALIO = 10;
 	public static final int TYPE_SENSOR_GENERIC = 11;
+	public static final int TYPE_DEVICEIO = 12;  // to exchange configuration parameters or any other message/value formatted as JSON string
 
 
 
@@ -80,7 +81,7 @@ public abstract class BLEItem {
 	protected String addressRef;
 	protected String deviceNameRef;
 	protected String actualDeviceName;
-	private BLEOnItemUpdateListener bleOnItemUpdateListener;
+	public BLEOnItemUpdateListener bleOnItemUpdateListener;
 	private boolean isbleOnItemUpdateListenerSet;
 	protected BLEAction[] bleActions;
 	protected BLEInit bleInit;

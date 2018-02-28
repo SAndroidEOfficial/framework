@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <devices>
 
+
 	<device>
 		<!-- has to match the 'device name' characteristic of the GAP -->
 		<deviceType>FlicButton</deviceType>
@@ -22,19 +23,19 @@
 								<rootitem></rootitem>
 							</parser>
 						</readable>
-					</characteristic>
+					</characteristic>		
 				</characteristics>
 			</service>
-
+			
 		</ble>
-
+		
 		<!-- abstraction used by the library -->
 		<items>
 			<!-- rootItems which may contein 'subItems' used by the library -->
 			<rootitem>
 				<name></name>
-
-				<!-- TODO: add more subItems which has name and bletype,
+				
+				<!-- TODO: add more subItems which has name and bletype, 
 				they will be inherited by the related Item sons -->
 				<subitems>
 					<item>
@@ -48,7 +49,7 @@
 							<name>simple_key_service</name>
 							<characteristic>key_press_state</characteristic>
 						</service>
-
+						
 						<!-- the data will be transmitted through the callback in the same order they are in here -->
 						<readableCharacteristic>
 							<name>key_press_state</name>
@@ -59,8 +60,7 @@
 			</rootitem>
 		</items>
 	</device>
-
-
+		
 	<device>
 		<!-- has to match the 'device name' characteristic of the GAP -->
 		<deviceType>BlueNRG</deviceType>
@@ -9043,6 +9043,92 @@
 						<uuid>713d0003-503e-4c75-ba94-3148f18d941e</uuid>
 						<writable>
 						
+							<!-- BEGIN: added by GL to send arbitrary strings as commands. String length is unfortunately still limited to 16 characters, but now almost all commands contains less than 4/5 characters. Should however be fixed with unlimited string length. Also bytes are converted to float to make this action compatible with legacy code in Sandroide library. This should be fixed too. -->
+							<model>
+								<id>send_string</id>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>0-0</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>1-1</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>2-2</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>3-3</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>4-4</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>5-5</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>6-6</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>7-7</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>8-8</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>9-9</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>10-10</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>11-11</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>12-12</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>13-13</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>14-14</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>15-15</position>
+								</data>
+							</model>
+							<!-- END: added by GL -->
+
 							<model>
 								<id>mode_model_0</id>
 								<!-- the position in this xml file shall be the position in the message -->
@@ -10464,6 +10550,49 @@
 				they will be inherited by the related Item sons -->
 				<subitems>
 
+					<!-- BEGIN: added by GL to make SandroideDevice work -->
+					<item>
+						<name>sandroide_device</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_deviceIO</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>BLE Shield UART Service</name>
+							<characteristic>BLE Shield TX</characteristic>
+							<characteristic>BLE Shield RX</characteristic>
+						</service>
+						
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>BLE Shield RX</name>
+							<!-- Here we use an existing parser id, but its execution is replaced in DeviceControl.java:259 for SandroideDevice BleItems: this behaviour should be fixed in next SandroidE versions -->
+							<dataCluster>rbs_gio0</dataCluster>
+						</readableCharacteristic>
+						
+						<action>
+							<id>send_string_value</id>
+							<sequence>
+								<sub_action>
+									<!-- the type is a special word for the library, pointing to a specific function -->
+									<type>write</type>
+									<writableCharacteristic>
+										<name>BLE Shield TX</name>
+										<model>send_string</model>
+									</writableCharacteristic>
+									<post_delay>0</post_delay>
+								</sub_action>
+								<!-- this is the delay introduced before the next subaction involving BLE, it doesn't affect the main thread -->
+							</sequence>
+							<post_delay>500</post_delay>
+						</action>
+						
+						<init>
+							<id>general_io_init</id>
+						</init>
+					</item>
+					<!-- END: added by GL to make SandroideDevice work -->
 
 					<item>
 						<name>rbs_general_io_0</name>
