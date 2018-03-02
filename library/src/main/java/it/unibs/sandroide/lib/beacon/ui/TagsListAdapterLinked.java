@@ -85,10 +85,13 @@ public class TagsListAdapterLinked extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        // TODO implement you own logic with ID
+        // TODO implement your own logic with ID
         return 0;
     }
 
+    /**
+     * ClickListener for button  to delete a tag
+     */
     private View.OnClickListener btnTagClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
