@@ -149,7 +149,11 @@ public class BeaconTags {
         getTagsListAdapter().notifyDataSetChanged();
     }
 
-    // todo: test
+    /**
+     * Todo: comment
+     * @param ctx is the application Context (usually this)
+     * @throws JSONException
+     */
     public void load(Context ctx) throws JSONException {
         SharedPreferences prefs = ctx.getSharedPreferences("BEACON_TAGS", MODE_PRIVATE);
         JSONObject config = new JSONObject(prefs.getString("config", "{}"));
@@ -189,7 +193,7 @@ public class BeaconTags {
     }
 
     /**
-     *
+     * todo: comment
      * @param ctx the activity context
      */
 //    todo: TEST
@@ -244,20 +248,6 @@ public class BeaconTags {
     public boolean store(Context ctx) throws JSONException {
         SharedPreferences.Editor editor = ctx.getSharedPreferences("BEACON_TAGS", MODE_PRIVATE).edit();
         JSONObject newconfig = this.tagsToJSON();
-//        todo: delete
-//        JSONObject newconfig = new JSONObject();
-//        Iterator<String> itbeac = beaconsToTags.keySet().iterator();
-//        while (itbeac.hasNext()) {
-//            String beaconk = itbeac.next();
-//            ArrayList<String> arrTags = beaconsToTags.get(beaconk);
-//            if (arrTags!=null && arrTags.size()>0) {
-//                newconfig.put(beaconk,new JSONArray());
-//                Iterator<String> ittags = arrTags.iterator();
-//                while (ittags.hasNext()) {
-//                    newconfig.getJSONArray(beaconk).put(ittags.next());
-//                }
-//            }
-//        }
         editor.putString("config", newconfig.toString());
         return editor.commit();
     }
