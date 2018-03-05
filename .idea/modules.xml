@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/SAndroidEFramework.iml" filepath="$PROJECT_DIR$/.idea/SAndroidEFramework.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\git\sandroide\framework-new\app\app.iml" filepath="C:\git\sandroide\framework-new\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/flasher/flasher.iml" filepath="$PROJECT_DIR$/flasher/flasher.iml" />
+      <module fileurl="file://C:\git\sandroide\framework-new\flasher\flasher.iml" filepath="C:\git\sandroide\framework-new\flasher\flasher.iml" />
+      <module fileurl="file://C:\git\sandroide\framework-new\framework.iml" filepath="C:\git\sandroide\framework-new\framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/framework-new.iml" filepath="$PROJECT_DIR$/.idea/framework-new.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://C:\git\sandroide\framework-new\library\library.iml" filepath="C:\git\sandroide\framework-new\library\library.iml" />
     </modules>
   </component>
 </project>

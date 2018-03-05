@@ -8,6 +8,9 @@
 # Java class files
 *.class
 
+# app module
+app/
+
 # Generated files
 bin/
 gen/

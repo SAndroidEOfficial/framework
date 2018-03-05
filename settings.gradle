@@ -1,1 +1,1 @@
-include ':library', ':flasher', ':app'
+include ':library', ':flasher'
