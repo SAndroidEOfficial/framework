@@ -280,6 +280,7 @@ public class BeaconTagActivity extends SandroideBaseActivity implements BeaconCo
                     Toast.makeText(this, "Defaults Tags loaded", Toast.LENGTH_SHORT);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(this, "Error in  Tags Resource", Toast.LENGTH_SHORT);
                 }
         }
         BeaconTags.getInstance().getBeaconsListAdapter().notifyDataSetChanged();
