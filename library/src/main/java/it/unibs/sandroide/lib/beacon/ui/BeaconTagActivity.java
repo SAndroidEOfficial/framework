@@ -22,6 +22,7 @@
 
 package it.unibs.sandroide.lib.beacon.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentTransaction;
@@ -55,6 +56,7 @@ import it.unibs.sandroide.lib.beacon.msg.BeaconMsgEddystoneURL;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgGimbal;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgIBeacon;
 import it.unibs.sandroide.lib.beacon.msg.BeaconMsgNearable;
+import it.unibs.sandroide.lib.beacon.services.SandroideBeaconService;
 
 /**
  * Allow to tag beacons and manage them (save, load default etc)
@@ -263,6 +265,9 @@ public class BeaconTagActivity extends SandroideBaseActivity implements BeaconCo
 //                    save the beacons tag
                     BeaconTags.getInstance().store(this);
                     Toast.makeText(this, "Tags saved", Toast.LENGTH_SHORT);
+                    Intent reloadTagIntent = new Intent();
+                    reloadTagIntent.setAction(SandroideBeaconService.BEACON_RELOAD_TAG);
+                    sendBroadcast(reloadTagIntent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -19,7 +19,7 @@
 
     <application>
         <service
-            android:name=".services.SandroideBeaconService"
+            android:name=".beacon.services.SandroideBeaconService"
             android:enabled="true"
             android:exported="true"></service>
     </application>

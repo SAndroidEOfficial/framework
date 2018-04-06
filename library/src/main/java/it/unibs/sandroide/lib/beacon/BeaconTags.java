@@ -193,10 +193,9 @@ public class BeaconTags {
     }
 
     /**
-     * todo: comment
+     * Load tags from the App res/raw directory in the exported_beacon_tags.json file
      * @param ctx the activity context
      */
-//    todo: TEST
     public void loadFromResources(Context ctx) throws JSONException {
         try {
             InputStream is = ctx.getResources().openRawResource(ctx.getResources().getIdentifier("exported_beacon_tags", "raw", ctx.getPackageName()));

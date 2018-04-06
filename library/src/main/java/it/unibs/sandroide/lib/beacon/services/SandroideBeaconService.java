@@ -1,8 +1,10 @@
-package it.unibs.sandroide.lib.services;
+package it.unibs.sandroide.lib.beacon.services;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -28,19 +30,20 @@ import it.unibs.sandroide.lib.beacon.BeaconTags;
 
 public class SandroideBeaconService extends Service implements BeaconConsumer {
     private final static String TAG = "SandroideBeaconService";
-    private final static long ACTIVE_BETWEEN_SCAN_PERIOD = 100L;
-    private final static long ACTIVE_SCAN_PERIOD = 2000L;
-    private final static long BACKGROUND_BETWEEN_SCAN_PERIOD = 120000L; //2 mins
-    private final static long BACKGROUND_SCAN_PERIOD = 20000L; //20 secs
-    private final static int IBEACON_MESSAGE_CODE = 533;
-    private final static int MINIMUM_CONFIDENCE_VALUE_ON_FOOT_ACTIVITY = 25; //We want to listen for light motion
-    private final static String NAME_REGION = "RegionDefault";
-    private BeaconManager beaconManager = null;
+//    todo: find a way to modify the following variable from the MainActivity
+    private final static long ACTIVE_BETWEEN_SCAN_PERIOD = 10000L;
+    private final static long ACTIVE_SCAN_PERIOD = 3000L;
+    private final static long BACKGROUND_BETWEEN_SCAN_PERIOD = 10000L; //10 sec
+    private final static long BACKGROUND_SCAN_PERIOD = 3000L; //3 secs
+    // ACTIONS
+    LoadBeaconTagsReceiver tagsReloader = new LoadBeaconTagsReceiver();
+    public final static  String BEACON_RELOAD_TAG = "it.unibs.sandroide.ACTION_BEACON_RELOAD_TAG";
+
+//    private final static int IBEACON_MESSAGE_CODE = 533;
+    public BeaconManager beaconManager = null;
     private Context context = this;
     private Region regionToScan;
-    private HashMap<String, String> mapDeviceArea;
     private boolean isBackgroundmode;
-    private String idStructure;
 
     @Override
     public void onCreate() {
@@ -49,20 +52,36 @@ public class SandroideBeaconService extends Service implements BeaconConsumer {
         isBackgroundmode = false;
         if (beaconManager == null)
             initBeaconManager();
+        //register the tag reloader listener
+        IntentFilter reloadTagFilter = new IntentFilter();
+        reloadTagFilter.addAction(BEACON_RELOAD_TAG);
+        registerReceiver(tagsReloader,reloadTagFilter);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        throw new RuntimeException("Please Override the onBind method for SandroideBeaconService");
     }
 
-    private void initBeaconManager() {
+    /**
+     * Load Beacon Tags definition from shared preferences
+     */
+    public void loadBeaconTags(){
+        try {
+            // load tagged beacons from shared preferences
+            BeaconTags.getInstance().load(this.getApplicationContext());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        BeaconTags.getInstance().initLayouts(beaconManager);
+    }
+
+    public void initBeaconManager() {
 
         BLEContext.initBLE(this.getApplicationContext());
         beaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext()); // AltBeacon Line
-        BeaconTags.getInstance().initLayouts(beaconManager);
-
+        loadBeaconTags();
 
         //Let's set the powerSaver so can reduce battery drain when in background
 //        BackgroundPowerSaver backgroundPowerSaver = new BackgroundPowerSaver(this);
@@ -165,15 +184,15 @@ public class SandroideBeaconService extends Service implements BeaconConsumer {
 //    }
 
 
-    private String getIdentifierFromBeacon(Beacon beacon) {
-        int beaconTypeCode = beacon.getBeaconTypeCode();
-        switch (beaconTypeCode) {
-            case IBEACON_MESSAGE_CODE:
-                return (beacon.getId1().toString() + beacon.getId2().toString() + beacon.getId3().toString()).toLowerCase();
-            default:
-                return null;
-        }
-    }
+//    private String getIdentifierFromBeacon(Beacon beacon) {
+//        int beaconTypeCode = beacon.getBeaconTypeCode();
+//        switch (beaconTypeCode) {
+//            case IBEACON_MESSAGE_CODE:
+//                return (beacon.getId1().toString() + beacon.getId2().toString() + beacon.getId3().toString()).toLowerCase();
+//            default:
+//                return null;
+//        }
+//    }
 
     @Override
     public void onBeaconServiceConnect() {
@@ -226,4 +245,17 @@ public class SandroideBeaconService extends Service implements BeaconConsumer {
 //            return StructureLocationDetectionService.this;
 //        }
 //    }
+
+    /**
+     * Receive the BEACON_RELOAD_TAG action intent and reload the tags definition from shared preferences.
+     */
+    private class LoadBeaconTagsReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadBeaconTags();
+        }
+    }
+
+
 }
