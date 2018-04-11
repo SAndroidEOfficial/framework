@@ -96,6 +96,7 @@ public class BeaconTags {
         return instance;
     }
 
+
     public static void startTaggingActivity(Context ctx) {
         Intent intent = new Intent(ctx, BeaconTagActivity.class);
         ctx.startActivity(intent);
@@ -149,8 +150,10 @@ public class BeaconTags {
         getTagsListAdapter().notifyDataSetChanged();
     }
 
+
     /**
      * Todo: comment
+     *
      * @param ctx is the application Context (usually this)
      * @throws JSONException
      */
@@ -194,6 +197,7 @@ public class BeaconTags {
 
     /**
      * Load tags from the App res/raw directory in the exported_beacon_tags.json file
+     *
      * @param ctx the activity context
      */
     public void loadFromResources(Context ctx) throws JSONException {
@@ -218,6 +222,7 @@ public class BeaconTags {
 
     /**
      * Convert the tag list in a JSON Object
+     *
      * @return JSONObject with all the current tags
      * @throws JSONException
      */
@@ -240,6 +245,7 @@ public class BeaconTags {
 
     /**
      * Stores the beacon tags into the shared preferences
+     *
      * @param ctx
      * @return
      * @throws JSONException
@@ -253,6 +259,7 @@ public class BeaconTags {
 
     /**
      * Export the saved beacons tags
+     *
      * @param ctx
      * @return
      * @throws JSONException
@@ -497,7 +504,6 @@ public class BeaconTags {
                         tn.didDetermineStateForTag(i, tag);
                 }
             });
-
             try {
                 mgr.startMonitoringBeaconsInRegion(computedRegion);
             } catch (RemoteException e) {

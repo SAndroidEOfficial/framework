@@ -43,10 +43,12 @@ public class BeaconMsgBase extends Beacon {
         lastSeen = new Date().getTime()/1000;
     }
 
+//    todo: How should it be implemented?
     public BeaconMsgBase parse() throws Exception {
         throw new Exception("This must be implemented by subclasses");
     };
 
+//    todo: how should it be implemented?
     public static void initLayout(BeaconManager mgr) throws Exception {
         throw new Exception("This must be implemented by subclasses");
     }
