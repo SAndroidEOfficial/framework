@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
+import org.apache.commons.io.HexDump;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ import it.unibs.sandroide.lib.item.Bleresource;
 public class SandroideDevice extends BLEItem {
     private final static String TAG="SandroideDevice";
 
-    private final static int ANALOG_MAX_VALUE = 1024;
+    private final static int ANALOG_MAX_VALUE = 1023;
 
     protected Map<Integer, SandroidePin> pins = new HashMap<Integer,SandroidePin>();
     protected OnDeviceConnectedListener bleOnDeviceConnectedListenerListener;
@@ -86,6 +87,10 @@ public class SandroideDevice extends BLEItem {
         //this.runA
         //
         //runAction(msg)
+    }
+
+    public void customAction(byte[] towrite) {
+        this.runAction(towrite);
     }
 
     //@Override
@@ -156,7 +161,19 @@ public class SandroideDevice extends BLEItem {
         msgReceived(msg.getBytes());
     }
 
+    private static String hexToAscii(String hexStr) {
+        StringBuilder output = new StringBuilder("");
+
+        for (int i = 0; i < hexStr.length(); i += 2) {
+            String str = hexStr.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+
+        return output.toString();
+    }
+
     public void msgReceived(byte[] msg) {
+        String strmsg=new String(msg);
 
         // if pin is set then we must pass the message to the right pin, if pin is omitted then this is a device-wide message
         //String msg2 = "J{\"pin\":2,\"cmd\":\"read\",value:3}";
@@ -170,42 +187,36 @@ public class SandroideDevice extends BLEItem {
         if (defaultHandling) {  // default handling is not executed if customMessageReceived says to not process further
             if (msg.length>0) {
                 byte cmd = msg[0]; // first byte is the command
+                boolean adafruitworkaround=cmd==52||cmd==53;  // workaround to make adafruit work. TOFIX: by fixing adafruit firmware sendMessage function sending byte array instead of newline terminated string
+                if (adafruitworkaround) {  // is a '4' or '5'
+                    // is written as hex   G is 52,55   ..-> 4 7  ->  G
+                    msg = hexToAscii(strmsg).getBytes();
+                    cmd = msg[0]; // first byte is the command
+                }
                 switch(cmd) {
                     case 'G': // these commands are pin commands, second byte is pin number
                         int i=1;
-                        while(i+2 < msg.length) {
-                            SandroidePin pin = pins.containsKey((int)msg[i]) ? (SandroidePin) pins.get((int)msg[i]) : null;
-                            if (pin != null) {
-                                i++;
-                                while (i+1<msg.length) {
-                                    pin.receivedValue(ByteBuffer.wrap(msg).getShort(i) / (float) ANALOG_MAX_VALUE);
-                                    i += 2;
+                            if (adafruitworkaround) {
+                                SandroidePin pin = pins.containsKey((int)msg[i]) ? (SandroidePin) pins.get((int)msg[i]) : null;
+                                if (pin != null) {
+                                    i++;
+                                    if (strmsg.length() >= 8)
+                                        pin.receivedValue(Integer.parseInt(strmsg.substring(i * 2, i * 2 + 2 * 2), 16));
+                                }
+                            } else {
+                                while(i+2 < msg.length) {
+                                    SandroidePin pin = pins.containsKey((int)msg[i]) ? (SandroidePin) pins.get((int)msg[i]) : null;
+                                    if (pin != null) {
+                                        i++;
+                                        while (i+1<msg.length) {
+                                            pin.receivedValue(ByteBuffer.wrap(msg).getShort(i) / (float) ANALOG_MAX_VALUE);
+                                            i += 2;
+                                        }
+                                    }
+                                    i+=3;
                                 }
                             }
-                            i+=3;
-                        }
                         break;
-                    /*case 'M': // at least 3 bytes: command, pin number, data
-                        if (msg.length<=2) throw new RuntimeException("Command '%c' must be at least 3 characters long");
-                        int pinNo = msg[1];
-                        if (pinNo >= 0) { // if pin is set then we must pass the message to the right pin
-                            SandroidePin pin = pins.containsKey(pinNo) ? (SandroidePin) pins.get(pinNo) : null;
-                            if (pin != null) {
-                                switch(cmd) {
-                                    case 'G':
-                                        pin.receivedValue(ByteBuffer.wrap(msg).getShort(2) / (float)ANALOG_MAX_VALUE);
-
-                                        break;
-                                    case 'M': //pin.receivedValue();
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        } else { // this is a device-wide message
-                            Log.w(TAG,String.format("Unknown pin message: %s", msg));
-                        }
-                        break;*/
 
                     //
                     // add more case here to add extra commands

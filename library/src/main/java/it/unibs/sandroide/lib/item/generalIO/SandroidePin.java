@@ -171,17 +171,18 @@ public class SandroidePin {
             if (device.isDeviceControlConnected()) {
                 switch (value.getClass().getSimpleName().toLowerCase()) {
                     case "boolean":
-                        byte[] towrite1 = String.format(Locale.ENGLISH, "T%c%c", this.pinNo, ((boolean)this.value)?1:0).getBytes();
+                        byte[] towrite1 = String.format(Locale.ENGLISH, "T%c%c", this.pinNo, ((boolean)this.value)?1023:0).getBytes();
                         this.device.runAction(towrite1);
                         break;
                     case "float":
-                        byte[] towrite2 = String.format(Locale.ENGLISH, "T%c%c", this.pinNo, ((float)this.value)==0?0:1).getBytes();
+                    case "integer":
+                        throw new RuntimeException("TO IMPLEMENT for PWM OUTPUT");
+                        /*byte[] towrite2 = String.format(Locale.ENGLISH, "T%c%c", this.pinNo, ((float)this.value)==0?0:1).getBytes();
                         this.device.runAction(towrite2);
                         break;
-                    case "integer":
                         byte[] towrite3 = String.format(Locale.ENGLISH, "T%c%c", this.pinNo, ((int)this.value)==0?0:1).getBytes();
                         this.device.runAction(towrite3);
-                        break;
+                        break;*/
 
                 }
                 //byte[] towrite = String.format("I%c%d",this.pinNo,this.samplingInterval).getBytes();
@@ -212,11 +213,15 @@ public class SandroidePin {
 
     protected void receivedValue(Object value) {
         Object oldvalue = this.value;
-        this.value = value;
+        if (mode==PIN_MODE_DIGITAL_INPUT||mode==PIN_MODE_DIGITAL_OUTPUT) {
+            this.value = Float.parseFloat(value.toString())!=0;
+        } else {
+            this.value = value;
+        }
         if (valueListener!=null) {
-            this.valueListener.onEvent(value,oldvalue);
+            this.valueListener.onEvent(this.value,oldvalue);
         } else if (rawvalueListener!=null) {
-            this.rawvalueListener.onEvent(value,oldvalue,this,device);
+            this.rawvalueListener.onEvent(this.value,oldvalue,this,device);
         }
     }
 

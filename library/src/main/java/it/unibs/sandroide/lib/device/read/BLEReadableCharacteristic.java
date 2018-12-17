@@ -140,7 +140,11 @@ public class BLEReadableCharacteristic {
         }
 
         public Builder setUUID(String uuid) {
-            this.uuid = UUID.fromString(uuid);
+            try {
+                this.uuid = UUID.fromString(uuid);
+            } catch (Exception ex) { // WORKAROUND FOR STRING UUIDs
+                this.uuid = UUID.fromString("00000000-"+uuid+"-0000-0000-000000000000");
+            }
             return this;
         }
 

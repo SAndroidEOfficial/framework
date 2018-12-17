@@ -227,6 +227,28 @@ public class BLESensor extends BLEItem {
 				break;
 
 			case TYPE_GENERIC:
+				setBleItemListeners(new BLEOnItemUpdateListener() {
+					@Override
+					public void onItemUpdate(BLEDeviceData[] data) {
+						boolean hasDeviceTimestamp=false;
+
+						BLESensorEvent se=new BLESensorEvent(data.length);
+						for (int i=0;i<data.length;i++){
+							//TODO: fixed configuration of axes... better for performance... use different type of data (X, Y, z)
+							//might be more flexible
+							se.values[i] = data[i].getValue();
+						}
+						Long tsLong = System.currentTimeMillis()*1000000;
+						se.timestamp=System.currentTimeMillis()*1000000;
+
+						se.sensor=BLESensor.this;
+						final BLESensorEvent sefin=se;
+						BLEsel.onSensorChanged(sefin);
+					}
+				}, null);
+				initItem();
+				break;
+
 			case TYPE_TEMPERATURE:
 				setBleItemListeners(new BLEOnItemUpdateListener() {
 					@Override
