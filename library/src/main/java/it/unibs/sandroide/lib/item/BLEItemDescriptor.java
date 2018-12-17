@@ -32,6 +32,7 @@ public class BLEItemDescriptor {
 	public final static String ble_temperature="ble_temperature";
 	public final static String ble_sensor="ble_sensor";
 	public final static String ble_generalIO="ble_generalIO";
+	public final static String ble_deviceIO="ble_deviceIO";
 	final static String endOfField="; ;";
 	final static String startOfline="-->";
 	private static final String TAG = "BLEItemDescriptor";

@@ -21,7 +21,8 @@
         android:name="it.unibs.sandroide.lib.activities.SandroideApplication">
         <activity
             android:label="@string/app_name"
-            android:name="it.unibs.sandroide.flasher.MainActivity" >
+            android:name="it.unibs.sandroide.flasher.MainActivity"
+            android:theme="@style/Theme.AppCompat">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,15 +40,18 @@
         </activity>
         
         <activity
-        android:name="it.unibs.sandroide.flasher.ble.communication.DeviceScanActivity">
+        android:name="it.unibs.sandroide.flasher.ble.communication.DeviceScanActivity"
+            android:theme="@style/Theme.AppCompat">
         </activity>
         
         <activity
-        android:name="it.unibs.sandroide.flasher.ble.device.DeviceControlActivity">
+        android:name="it.unibs.sandroide.flasher.ble.device.DeviceControlActivity"
+            android:theme="@style/Theme.AppCompat">
         </activity>
 
         <activity
-            android:name="it.unibs.sandroide.flasher.ble.ResourcesActivity">
+            android:name="it.unibs.sandroide.flasher.ble.ResourcesActivity"
+            android:theme="@style/Theme.AppCompat">
         </activity>
 
         <provider

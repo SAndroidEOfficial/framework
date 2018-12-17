@@ -23,6 +23,8 @@ package it.unibs.sandroide.lib.data;
 
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -360,6 +362,7 @@ public class BLEDeviceData extends BLEData{
             BLEDeviceData.this.value=dataHandleInterface.handle
                     (dataConversionInterface.convert(bytes, offset, length),dataMap, intercept,
                             slope, handle_value);
+            //BLEDeviceData.this.value = ByteBuffer.wrap(bytes,offset,length).order(ByteOrder.LITTLE_ENDIAN).getFloat();
         }
 
         /**

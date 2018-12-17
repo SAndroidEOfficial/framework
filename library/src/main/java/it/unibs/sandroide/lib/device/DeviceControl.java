@@ -52,6 +52,7 @@ import it.unibs.sandroide.lib.device.read.BLEReadableCharacteristic;
 import it.unibs.sandroide.lib.device.read.FakeNotification;
 import it.unibs.sandroide.lib.item.BLEItem;
 import it.unibs.sandroide.lib.item.BLEOnItemInitiatedListener;
+import it.unibs.sandroide.lib.item.generalIO.SandroideDevice;
 
 /**
  * Handles the remote device
@@ -70,7 +71,7 @@ public class DeviceControl {
     
     protected DeviceControl me;
     protected Context context;
-    protected BluetoothLeDevice mBluetoothLeDevice;
+    public BluetoothLeDevice mBluetoothLeDevice;
 	boolean mOperative=false;
     protected HashMap<String, HashMap<String, BluetoothGattCharacteristic>> mServices =
     		new HashMap<>();
@@ -251,8 +252,18 @@ public class DeviceControl {
 						DevicesManagerBLEOnConnectionEventListener.onConnectionEventToDevicesManager
 								(BluetoothLeDevice.ACTION_NAME_DEVICE_AVAILABLE_FROM_GATT_SERVICE, me);
 					}
+					handleData(characteristic);
+				} else {
+					// WORKAROUND: For SandroideDevice we skip completely xml parsers and forward the received byte array directly to the bleitem
+					// Parsing using xml files has proved to be VERY SLOW, NOT FLEXIBLE and WAY TOO COMPLICATED (only fixed length messages, to be coded in advance in xml files)
+					if (items.size() > 0 && "SandroideDevice".equals(items.get(0).getClass().getSimpleName())) {
+						//items.get(0).bleOnItemUpdateListener.onItemUpdate(characteristic.getValue());
+						SandroideDevice dev = ((SandroideDevice) items.get(0));
+						dev.msgReceived(characteristic.getValue());
+					} else {
+						handleData(characteristic);
+					}
 				}
-        		handleData(characteristic);
         		break;
         	
         	case BluetoothLeDevice.ACTION_GATT_CONNECTED:

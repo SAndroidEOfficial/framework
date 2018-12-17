@@ -1,32 +1,27 @@
 apply plugin: 'com.android.library'
 
 
-    android {
-        compileSdkVersion 23
-        buildToolsVersion "23.0.3"
-
-        defaultConfig {
-            minSdkVersion 19
-            targetSdkVersion 23
-            versionCode 1
-            versionName "1.0"
-        }
-
-
+android {
+    compileSdkVersion 25
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
 //        buildTypes {
 //            release {
 //                minifyEnabled false
 //                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 //            }
 //        }
-
-        buildTypes{
-            release{
-                consumerProguardFiles 'proguard-rules.pro'
-            }
+    buildTypes {
+        release {
+            consumerProguardFiles 'proguard-rules.pro'
         }
-
     }
+    buildToolsVersion '26.0.2'
+}
 
 //task jar(type: Jar, dependsOn: 'assembleRelease') {
 //    from fileTree(dir: 'build/intermediates/classes/release')
@@ -43,7 +38,9 @@ allprojects {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'org.altbeacon:android-beacon-library:2.9.2'  // from 2.8.1 to 2.9.2 replaces setBeaconRange with addBeaconRange
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'org.altbeacon:android-beacon-library:2.9.2'
+    // from 2.8.1 to 2.9.2 replaces setBeaconRange with addBeaconRange
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'com.android.support:customtabs:25.4.0'
 }

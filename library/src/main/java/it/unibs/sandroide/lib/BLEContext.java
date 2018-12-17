@@ -45,10 +45,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 import it.unibs.sandroide.lib.activities.SandroideApplication;
@@ -60,6 +58,7 @@ import it.unibs.sandroide.lib.item.BleResourcesHandler;
 import it.unibs.sandroide.lib.item.Bleresource;
 import it.unibs.sandroide.lib.item.alarm.BLEAlarm;
 import it.unibs.sandroide.lib.item.button.BLEButton;
+import it.unibs.sandroide.lib.item.generalIO.SandroideDevice;
 import it.unibs.sandroide.lib.item.generalIO.BLEGeneralIO;
 import it.unibs.sandroide.lib.item.sensor.BLESensor;
 import it.unibs.sandroide.lib.item.sensor.BLESensorManager;
@@ -179,6 +178,10 @@ public class BLEContext {
 
 				case BLEItemDescriptor.ble_generalIO:
 					return getItem(BLEItem.TYPE_GENERALIO,
+							bleresource.getDevtype(), bleresource.getCardinality(), bleresource);
+
+				case BLEItemDescriptor.ble_deviceIO:
+					return getItem(BLEItem.TYPE_DEVICEIO,
 							bleresource.getDevtype(), bleresource.getCardinality(), bleresource);
 
 				default:
@@ -422,6 +425,11 @@ public class BLEContext {
 				Log.d(TAG, "il num del type generalIO  : " + type);
 				mBleItem = new BLEGeneralIO(deviceName, bleresource);
 				break;
+
+			case BLEItem.TYPE_DEVICEIO:
+				Log.d(TAG, "il num del type deviceIO  : " + type);
+				mBleItem = new SandroideDevice(deviceName, bleresource);
+				break;
 		}
 
 		addBLEItem(mBleItem);
@@ -519,7 +527,7 @@ public class BLEContext {
 
 	//region mbleItems handling
 	//----------------------------------------------------------------------------------------------
-	private static void addBLEItem(BLEItem bleItem)
+	public static void addBLEItem(BLEItem bleItem)
 	{
 		mbleItems.add(bleItem);
 	}

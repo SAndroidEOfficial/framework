@@ -106,7 +106,7 @@ public class DeviceControlActivity extends RootActivity implements View.OnClickL
         //mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
 
-        getActionBar().setTitle(mDeviceFriendlyName);
+        if (getActionBar()!=null) getActionBar().setTitle(mDeviceFriendlyName);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         
         this.mBluetoothLeDevice=new BluetoothLeDevice(this, mDeviceAddress);
@@ -169,7 +169,7 @@ public class DeviceControlActivity extends RootActivity implements View.OnClickL
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    getActionBar().setTitle(mDeviceFriendlyName+": "+mAttributeDeviceName);}
+                                    if (getActionBar()!=null) getActionBar().setTitle(mDeviceFriendlyName+": "+mAttributeDeviceName);}
                             });
                             listGattServicesAndAttributes(devicesDescriptorNew,
                                     mBluetoothLeDevice.getBluetoothGatt().getServices());
@@ -191,7 +191,7 @@ public class DeviceControlActivity extends RootActivity implements View.OnClickL
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            getActionBar().setTitle(mDeviceFriendlyName+": "+mAttributeDeviceName);}
+                            if (getActionBar()!=null) getActionBar().setTitle(mDeviceFriendlyName+": "+mAttributeDeviceName);}
                     });
 
                     devicesDescriptorNew=DevicesDescriptorNew.getDeviceDescriptorByName

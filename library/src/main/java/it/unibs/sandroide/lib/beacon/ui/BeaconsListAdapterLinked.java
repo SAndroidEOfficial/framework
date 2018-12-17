@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,108 +142,113 @@ public class BeaconsListAdapterLinked extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View result;
+        View result = convertView;
 
         String key = getItem(position);
         BeaconMsgBase item = mData.get(key);
         Button btnTag;
 
-        if (convertView == null) {
+        if (item!=null) {
+            if (convertView == null) {
 
-            LinearLayout layout = new LinearLayout(parent.getContext());
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setGravity(Gravity.TOP);
-            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                LinearLayout layout = new LinearLayout(parent.getContext());
+                layout.setOrientation(LinearLayout.HORIZONTAL);
+                layout.setGravity(Gravity.TOP);
+                layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            // ROW : beacon type image, text section, tag button
-            ImageView img = new ImageView(parent.getContext());
-            img.setId(IMG_VIEW_ID);
-            byte[] decodedString = Base64.decode(item.getImage(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            img.setImageBitmap(decodedByte);
-            img.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,0));
-            img.setPadding(10,10,10,10);
+                // ROW : beacon type image, text section, tag button
+                ImageView img = new ImageView(parent.getContext());
+                img.setId(IMG_VIEW_ID);
+                byte[] decodedString = Base64.decode(item.getImage(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                img.setImageBitmap(decodedByte);
+                img.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 0));
+                img.setPadding(10, 10, 10, 10);
 
-            LinearLayout textLayout= new LinearLayout(parent.getContext());
-            textLayout.setOrientation(LinearLayout.VERTICAL);
-            textLayout.setGravity(Gravity.TOP);
-            textLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT,2));
+                LinearLayout textLayout = new LinearLayout(parent.getContext());
+                textLayout.setOrientation(LinearLayout.VERTICAL);
+                textLayout.setGravity(Gravity.TOP);
+                textLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
-            btnTag = new Button(parent.getContext());
-            btnTag.setId(TAGBTN_VIEW_ID);
-            btnTag.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,1));
-            btnTag.setPadding(10,10,10,10);
-            btnTag.setTag(key);
-            btnTag.setOnClickListener(btnTagClickListener);
-
-
-            layout.addView(img);
-            layout.addView(textLayout);
-            layout.addView(btnTag);
-
-            // TEXT SECTION : title above and features below
-            TextView title = new TextView(parent.getContext());
-            title.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            title.setId(TITLE_VIEW_ID);
-            title.setPadding(10,10,10,10);
-            title.setSingleLine(true);
-            title.setHorizontallyScrolling(true);
-
-            LinearLayout featuresLayout = new LinearLayout(parent.getContext());
-            featuresLayout.setOrientation(LinearLayout.HORIZONTAL);
-            featuresLayout.setGravity(Gravity.TOP);
-            featuresLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            textLayout.addView(title);
-            textLayout.addView(featuresLayout);
-
-            // TEXT FEATURES : parserid, meters and seconds ago
-            TextView parser = new TextView(parent.getContext());
-            parser.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT,1));
-            parser.setGravity(Gravity.LEFT);
-            parser.setId(PARSER_VIEW_ID);
-
-            TextView distance = new TextView(parent.getContext());
-            distance.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT,2));
-            distance.setGravity(Gravity.RIGHT);
-            distance.setId(DISTANCE_VIEW_ID);
-
-            TextView lastSeen = new TextView(parent.getContext());
-            lastSeen.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT,2));
-            lastSeen.setGravity(Gravity.RIGHT);
-            lastSeen.setId(LASTSEEN_VIEW_ID);
-
-            featuresLayout.addView(parser);
-            featuresLayout.addView(distance);
-            featuresLayout.addView(lastSeen);
+                btnTag = new Button(parent.getContext());
+                btnTag.setId(TAGBTN_VIEW_ID);
+                btnTag.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                btnTag.setPadding(10, 10, 10, 10);
+                btnTag.setTag(key);
+                btnTag.setOnClickListener(btnTagClickListener);
 
 
-            result = layout;
-        } else {
-            result = convertView;
-        }
+                layout.addView(img);
+                layout.addView(textLayout);
+                layout.addView(btnTag);
 
-        if (result!=null) {
+                // TEXT SECTION : title above and features below
+                TextView title = new TextView(parent.getContext());
+                title.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                title.setId(TITLE_VIEW_ID);
+                title.setPadding(10, 10, 10, 10);
+                title.setSingleLine(true);
+                title.setHorizontallyScrolling(true);
 
-            if (new Date().getTime()/1000-item.getLastSeen() > 20) {  // don't show if too old
-                result.setLayoutParams(new AbsListView.LayoutParams(-1,1));
-                result.setVisibility(View.GONE);
+                LinearLayout featuresLayout = new LinearLayout(parent.getContext());
+                featuresLayout.setOrientation(LinearLayout.HORIZONTAL);
+                featuresLayout.setGravity(Gravity.TOP);
+                featuresLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                textLayout.addView(title);
+                textLayout.addView(featuresLayout);
+
+                // TEXT FEATURES : parserid, meters and seconds ago
+                TextView parser = new TextView(parent.getContext());
+                parser.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                parser.setGravity(Gravity.LEFT);
+                parser.setId(PARSER_VIEW_ID);
+
+                TextView distance = new TextView(parent.getContext());
+                distance.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 2));
+                distance.setGravity(Gravity.RIGHT);
+                distance.setId(DISTANCE_VIEW_ID);
+
+                TextView lastSeen = new TextView(parent.getContext());
+                lastSeen.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 2));
+                lastSeen.setGravity(Gravity.RIGHT);
+                lastSeen.setId(LASTSEEN_VIEW_ID);
+
+                featuresLayout.addView(parser);
+                featuresLayout.addView(distance);
+                featuresLayout.addView(lastSeen);
+
+
+                result = layout;
             } else {
-                result.setVisibility(View.VISIBLE);
-                result.setLayoutParams(new AbsListView.LayoutParams(-1,-2));
+                result = convertView;
+            }
 
-                TextView title = ((TextView) result.findViewById(TITLE_VIEW_ID));
-                title.setText(item.getIdentifiers().toString());
-                ((TextView) result.findViewById(DISTANCE_VIEW_ID)).setText(String.format("%.1f m", item.getDistance()));
+            if (result != null) {  //) && item != null) {
+                try {
+                    if (new Date().getTime() / 1000 - item.getLastSeen() > 20) {  // don't show if too old
+                        result.setLayoutParams(new AbsListView.LayoutParams(-1, 1));
+                        result.setVisibility(View.GONE);
+                    } else {
+                        result.setVisibility(View.VISIBLE);
+                        result.setLayoutParams(new AbsListView.LayoutParams(-1, -2));
 
-                ((TextView) result.findViewById(LASTSEEN_VIEW_ID)).setText(String.format("%d s ago", new Date().getTime() / 1000 - item.getLastSeen()));
-                ((TextView) result.findViewById(PARSER_VIEW_ID)).setText(item.getClass().getSimpleName());
-                //((TextView) result.findViewById(DISTANCE_VIEW_ID)).setText(item.getParserIdentifier());
+                        TextView title = ((TextView) result.findViewById(TITLE_VIEW_ID));
+                        title.setText(item.getIdentifiers().toString());
+                        ((TextView) result.findViewById(DISTANCE_VIEW_ID)).setText(String.format("%.1f m", item.getDistance()));
 
-                title.setEnabled((new Date().getTime() / 1000) - item.getLastSeen() < 10);
+                        ((TextView) result.findViewById(LASTSEEN_VIEW_ID)).setText(String.format("%d s ago", new Date().getTime() / 1000 - item.getLastSeen()));
+                        ((TextView) result.findViewById(PARSER_VIEW_ID)).setText(item.getClass().getSimpleName());
+                        //((TextView) result.findViewById(DISTANCE_VIEW_ID)).setText(item.getParserIdentifier());
 
-                btnTag = ((Button) result.findViewById(TAGBTN_VIEW_ID));
-                btnTag.setText(String.format("%d", BeaconTags.getInstance().getTagsNumberForBeacon(key)));
+                        title.setEnabled((new Date().getTime() / 1000) - item.getLastSeen() < 10);
+
+                        btnTag = ((Button) result.findViewById(TAGBTN_VIEW_ID));
+                        btnTag.setText(String.format("%d", BeaconTags.getInstance().getTagsNumberForBeacon(key)));
+                    }
+                } catch (Exception ex) {
+                    Log.e("asd", ex.toString());
+                }
             }
         }
 

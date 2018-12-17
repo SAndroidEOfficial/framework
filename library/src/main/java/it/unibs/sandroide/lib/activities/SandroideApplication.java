@@ -54,8 +54,11 @@ public class SandroideApplication extends Application implements  Application.Ac
     public void onCreate() {
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
+        try {
+            beaconManager = BeaconManager.getInstanceForApplication(this);
+        } catch(NoClassDefFoundError ex){
 
-        beaconManager = BeaconManager.getInstanceForApplication(this);
+        }
     }
 
     @Override
