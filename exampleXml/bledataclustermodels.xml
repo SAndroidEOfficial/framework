@@ -2,10 +2,74 @@
 <dataclustermodels>
 
 
-	
+	<dataClusterModel>
+		<id>heart_rate_meas</id>
+			<data_handling>
+			<type>array</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself 
+		<subdata>
+			<id>flags</id>
+			<position>0-0</position>
+			<format>uint8</format>
+			<sensor>
+				<type>generic</type>
+				<description>heart_rate_measurement first byte flags</description>
+				<accuracy></accuracy>
+				<drift></drift>
+				<measurementRange>0-255</measurementRange>
+			</sensor>
+		</subdata>-->
+		<subdata>
+			<id>hrvalue8</id>
+			<position>1-1</position>
+			<format>uint8</format>
+			<sensor>
+				<type>generic</type>
+				<description>heart_rate_measurement as uint8. Note: The format of the Heart Rate Measurement Value field is dependent upon bit 0 of the Flags field.</description>
+				<accuracy></accuracy>
+				<drift></drift>
+				<measurementRange>0-255</measurementRange>
+			</sensor>
+		</subdata>
+		<!--<subdata>
+			<id>hrvalue16</id>
+			<position>2-3</position>
+			<format>uint16</format>
+			<sensor>
+				<type>heart-rate-value</type>
+				<description>heart_rate_measurement value as uint16. Note: The format of the Heart Rate Measurement Value field is dependent upon bit 0 of the Flags field.</description>
+				<accuracy></accuracy>
+				<drift></drift>
+			</sensor>
+		</subdata>
+		<subdata>
+			<id>energyexp</id>
+			<position>2-3</position>
+			<format>uint16</format>
+			<sensor>
+				<type>energy-exp</type>
+				<description>The presence of the Energy Expended field is dependent upon bit 3 of the Flags field.</description>
+				<accuracy></accuracy>
+				<drift></drift>
+			</sensor>
+		</subdata>
+		<subdata>
+			<id>rrinterval</id>
+			<position>4-5</position>
+			<format>uint16</format>
+			<sensor>
+				<type>rr-interval</type>
+				<description>RR-interval.</description>
+				<accuracy></accuracy>
+				<drift></drift>
+			</sensor>
+		</subdata>-->
+	</dataClusterModel>
+
 	<dataClusterModel>
 
-					<id>acc_st</id>
+					<id>acc_st_old</id>
  					<data_handling>
 						<type>array</type>
 					</data_handling>
@@ -44,6 +108,59 @@
 						<position>4-5</position>
 						<id>acc_z</id>
 						<format>sint16</format>
+						<sensor>
+							<type>accelerometer_z</type>
+							<description>accelerometer z axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+		</dataClusterModel>
+	
+	<dataClusterModel>
+
+					<id>acc_st</id>
+ 					<data_handling>
+						<type>array</type>
+					</data_handling>
+					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+					<subdata>
+						<id>acc_x</id>
+						<position>0-3</position>
+						<format>sfloat</format>
+						<sensor>
+							<type>accelerometer_x</type>
+							<description>accelerometer x axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>4-7</position>
+						<id>acc_y</id>
+						<format>sfloat</format>
+						<sensor>
+							<type>accelerometer_y</type>
+							<description>accelerometer y axis</description>
+							<accuracy></accuracy>
+							<drift></drift>
+							<measurementRange>0-1000</measurementRange>
+							<precision>0.1</precision>
+							<unit>mg</unit>
+						</sensor>
+					</subdata>
+				
+					<subdata>
+						<position>8-11</position>
+						<id>acc_z</id>
+						<format>sfloat</format>
 						<sensor>
 							<type>accelerometer_z</type>
 							<description>accelerometer z axis</description>
@@ -229,54 +346,54 @@
 				</dataClusterModel>
 				
 	<dataClusterModel>
-					<id>acc_ti</id>
-					<data_handling>
-						<type>single</type>
-					</data_handling>
-					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
-					<subdata>
-						<id>acc_axis</id>
-						<position>0-0</position>
-						<format>sint8</format>
-						<intercept>0</intercept>
-						<slope>15.15</slope>
-						<data_handling>
-							<type>scaled</type>
-						</data_handling>
-						
-						<sensor>
-							<type>accelerometer_axis</type>
-							<description>accelerometer single axis</description>
-							<accuracy></accuracy>
-							<drift></drift>
-							<measurementRange>0-1000</measurementRange>
-							<precision>0.1</precision>
-							<unit>mg</unit>
-						</sensor>
-					</subdata>
-				</dataClusterModel>
-				
+		<id>acc_ti</id>
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+		<subdata>
+			<id>acc_axis</id>
+			<position>0-0</position>
+			<format>sint8</format>
+			<intercept>0</intercept>
+			<slope>15.15</slope>
+			<data_handling>
+				<type>scaled</type>
+			</data_handling>
+			
+			<sensor>
+				<type>accelerometer_axis</type>
+				<description>accelerometer single axis</description>
+				<accuracy></accuracy>
+				<drift></drift>
+				<measurementRange>0-1000</measurementRange>
+				<precision>0.1</precision>
+				<unit>mg</unit>
+			</sensor>
+		</subdata>
+	</dataClusterModel>
+	
 	<dataClusterModel>
-					<id>batt_ti</id>
-					<data_handling>
-						<type>single</type>
-					</data_handling>
-					<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
-					<subdata>
-						<id>battery</id>
-						<position>0-0</position>
-						<format>sint8</format>
-						<sensor>
-							<type>battery</type>
-							<description>device battery</description>
-							<accuracy></accuracy>
-							<drift></drift>
-							<measurementRange>0-3.3</measurementRange>
-							<precision>0.1</precision>
-							<unit>V</unit>
-						</sensor>
-					</subdata>
-				</dataClusterModel>
+		<id>batt_ti</id>
+		<data_handling>
+			<type>single</type>
+		</data_handling>
+		<!-- subdata are listed in List. dataCluster can't have position parameter itself--> 
+		<subdata>
+			<id>battery</id>
+			<position>0-0</position>
+			<format>sint8</format>
+			<sensor>
+				<type>battery</type>
+				<description>device battery</description>
+				<accuracy></accuracy>
+				<drift></drift>
+				<measurementRange>0-3.3</measurementRange>
+				<precision>0.1</precision>
+				<unit>V</unit>
+			</sensor>
+		</subdata>
+	</dataClusterModel>
 
 	<dataClusterModel>
 		<!-- left to match with the Cluster in data parser. It doesn't mean anything here -->

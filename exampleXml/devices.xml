@@ -60,6 +60,196 @@
 			</rootitem>
 		</items>
 	</device>
+
+	
+	<device>
+		<!-- has to match the 'device name' characteristic of the GAP -->
+		<deviceType>Thingy</deviceType>
+		<!-- used as bleItem name prefix to distinguish from the ones of other devs -->
+		<nickname>thi</nickname>
+		<!-- ble services and characteristics fournished by the dev  -->
+		<ble>
+		
+			<service>
+				<name>accelerometer_service</name>
+				<uuid>ef680400-9b35-4933-9b10-52ffa9740042</uuid>
+				<characteristics>
+					<characteristic>
+						<name>triassial_accelerometer</name>
+						<uuid>ef68040a-9b35-4933-9b10-52ffa9740042</uuid>
+						<!-- make faster the handling of received message.
+						If absent or without parser attribute the characteristic won't be read 
+						(neither received as notification)-->
+						<readable>
+							<parser>
+								<!-- id of the related parser  -->
+								<parser_id>ST_ACCELEROMETER</parser_id>
+								<!-- name of the rootitem which receives the data by this char,
+								for compatibility with previous library version... has to be changed-->
+								<rootitem></rootitem>
+							</parser>
+						</readable>
+					</characteristic>
+				</characteristics>						
+			</service>
+		</ble>
+		
+		<!-- abstraction used by the library -->
+		<items>
+			<!-- rootItems which may contein 'subItems' used by the library -->
+			<rootitem>
+				<name></name>
+				
+				<init_models>
+					<init>
+						<id>accelerometer_init</id>
+						<sequence>
+						
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>start_notify</type>
+								<readableCharacteristic>
+									<name>triassial_accelerometer</name>
+								</readableCharacteristic>
+								<post_delay>0</post_delay>
+							</sub_action>
+						<!-- the last sub_action of the init trigger the callback to the objects -->
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>idle</type>
+								<post_delay>200</post_delay>
+							</sub_action>
+							<!-- this is the delay introduced before the next subaction involving BLE, it doesn't affect the main thread -->
+						</sequence>
+						<!-- this delay is deprecated -->
+						<post_delay>0</post_delay>
+					</init>
+				</init_models>
+				
+				<!-- TODO: add more subItems which has name and bletype, 
+				they will be inherited by the related Item sons -->
+				<subitems>
+					<item>
+						<name>thi_accelerometer</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_accelerometer</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>accelerometer_service</name>
+							<characteristic>triassial_accelerometer</characteristic>
+						</service>
+						
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>triassial_accelerometer</name>
+							<dataCluster>acc_st</dataCluster>
+						</readableCharacteristic>
+						<init>
+							<id>accelerometer_init</id>
+						</init>
+
+					</item>
+				</subitems>
+			</rootitem>
+		</items>
+	</device>
+		
+
+	<device>
+		<!-- has to match the 'device name' characteristic of the GAP -->
+		<deviceType>Polar H10 25EA9626</deviceType>
+		<!-- used as bleItem name prefix to distinguish from the ones of other devs -->
+		<nickname>pol</nickname>
+		<!-- ble services and characteristics fournished by the dev  -->
+		<ble>
+		
+			<service>
+				<name>heart_rate_service</name>
+				<uuid>0000180d-0000-1000-8000-00805f9b34fb</uuid>
+				<characteristics>
+					<characteristic>
+						<name>heart_rate_measurement_characteristic</name>
+						<uuid>00002a37-0000-1000-8000-00805f9b34fb</uuid>
+						<!-- make faster the handling of received message.
+						If absent or without parser attribute the characteristic won't be read 
+						(neither received as notification)-->
+						<readable>
+							<parser>
+								<!-- id of the related parser  -->
+								<parser_id>HEART_RATE_MEAS</parser_id>
+								<!-- name of the rootitem which receives the data by this char,
+								for compatibility with previous library version... has to be changed-->
+								<rootitem></rootitem>
+							</parser>
+						</readable>
+					</characteristic>
+				</characteristics>						
+			</service>
+		</ble>
+		
+		<!-- abstraction used by the library -->
+		<items>
+			<!-- rootItems which may contein 'subItems' used by the library -->
+			<rootitem>
+				<name></name>
+				
+				<init_models>
+					<init>
+						<id>heart_rate_init</id>
+						<sequence>
+						
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>start_notify</type>
+								<readableCharacteristic>
+									<name>heart_rate_measurement_characteristic</name>
+								</readableCharacteristic>
+								<post_delay>0</post_delay>
+							</sub_action>
+						<!-- the last sub_action of the init trigger the callback to the objects -->
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>idle</type>
+								<post_delay>200</post_delay>
+							</sub_action>
+							<!-- this is the delay introduced before the next subaction involving BLE, it doesn't affect the main thread -->
+						</sequence>
+						<!-- this delay is deprecated -->
+						<post_delay>0</post_delay>
+					</init>
+				</init_models>
+				
+				<!-- TODO: add more subItems which has name and bletype, 
+				they will be inherited by the related Item sons -->
+				<subitems>
+					<item>
+						<name>pol_heartrate</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_temperature</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>heart_rate_service</name>
+							<characteristic>heart_rate_measurement_characteristic</characteristic>
+						</service>
+						
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>heart_rate_measurement_characteristic</name>
+							<dataCluster>heart_rate_meas</dataCluster>
+						</readableCharacteristic>
+						<init>
+							<id>heart_rate_init</id>
+						</init>
+
+					</item>
+				</subitems>
+			</rootitem>
+		</items>
+	</device>
 		
 	<device>
 		<!-- has to match the 'device name' characteristic of the GAP -->
@@ -753,6 +943,92 @@
 						<uuid>713d0003-503e-4c75-ba94-3148f18d941e</uuid>
 						<writable>
 						
+
+							<!-- BEGIN: added by GL to send arbitrary strings as commands. String length is unfortunately still limited to 16 characters, but now almost all commands contains less than 4/5 characters. Should however be fixed with unlimited string length. Also bytes are converted to float to make this action compatible with legacy code in Sandroide library. This should be fixed too. -->
+							<model>
+								<id>send_string</id>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>0-0</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>1-1</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>2-2</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>3-3</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>4-4</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>5-5</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>6-6</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>7-7</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>8-8</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>9-9</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>10-10</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>11-11</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>12-12</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>13-13</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>14-14</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>15-15</position>
+								</data>
+							</model>
+							<!-- END: added by GL -->
 						
 							<model>
 								<id>mode_model_2</id>
@@ -2082,6 +2358,50 @@
 				<!-- TODO: add more subItems which has name and bletype, 
 				they will be inherited by the related Item sons -->
 				<subitems>
+
+					<!-- BEGIN: added by GL to make SandroideDevice work -->
+					<item>
+						<name>sandroide_device</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_deviceIO</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>BLE Shield UART Service</name>
+							<characteristic>BLE Shield TX</characteristic>
+							<characteristic>BLE Shield RX</characteristic>
+						</service>
+						
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>BLE Shield RX</name>
+							<!-- Here we use an existing parser id, but its execution is replaced in DeviceControl.java:259 for SandroideDevice BleItems: this behaviour should be fixed in next SandroidE versions -->
+							<dataCluster>rbs_gio0</dataCluster>
+						</readableCharacteristic>
+						
+						<action>
+							<id>send_string_value</id>
+							<sequence>
+								<sub_action>
+									<!-- the type is a special word for the library, pointing to a specific function -->
+									<type>write</type>
+									<writableCharacteristic>
+										<name>BLE Shield TX</name>
+										<model>send_string</model>
+									</writableCharacteristic>
+									<post_delay>0</post_delay>
+								</sub_action>
+								<!-- this is the delay introduced before the next subaction involving BLE, it doesn't affect the main thread -->
+							</sequence>
+							<post_delay>500</post_delay>
+						</action>
+						
+						<init>
+							<id>general_io_init</id>
+						</init>
+					</item>
+					<!-- END: added by GL to make SandroideDevice work -->
 				
 					<item>
 						<name>rbs_general_io_0</name>
@@ -6586,6 +6906,7 @@
 				they will be inherited by the related Item sons -->
 				<subitems>
 
+
 					<item>
 						<name>raspi_general_io_2</name>
 						<!-- shall match one of the bletype defined by the library -->
@@ -9003,6 +9324,216 @@
 						</init>
 						
 					</item>
+
+				</subitems>
+			</rootitem>
+		</items>
+	</device>
+	
+
+	<device>
+		<!-- has to match the 'device name' characteristic of the GAP -->
+		<deviceType>Adafruit Bluefruit LE</deviceType>
+		<!-- used as bleItem name prefix to distinguish from the ones of other devs -->
+		<nickname>bluefruit</nickname>
+		<!-- ble services and characteristics fournished by the dev  -->
+		<ble>
+			<service>
+				<name>Nordic UART Service</name>
+				<uuid>6e400001-b5a3-f393-e0a9-e50e24dcca9e</uuid>
+				<characteristics>
+					<characteristic>
+						<name>TX Characteristic</name>
+						<uuid>6e400003-b5a3-f393-e0a9-e50e24dcca9e</uuid>
+						<!-- make faster the handling of received message.
+						If absent or without parser attribute the characteristic won't be read 
+						(neither received as notification)-->
+						<readable>
+							<parser>
+								<!-- id of the related parser  -->
+								<parser_id>REDBEAR_SHIELD</parser_id>
+								<!-- name of the rootitem which receives the data by this char,
+								for compatibility with previous library version... has to be changed-->
+								<rootitem></rootitem>
+							</parser>
+						</readable>
+					</characteristic>
+					
+					<characteristic>
+						<name>RX Characteristic</name>
+						<uuid>6e400002-b5a3-f393-e0a9-e50e24dcca9e</uuid>
+						<writable>
+							<!-- BEGIN: added by GL to send arbitrary strings as commands. String length is unfortunately still limited to 16 characters, but now almost all commands contains less than 4/5 characters. Should however be fixed with unlimited string length. Also bytes are converted to float to make this action compatible with legacy code in Sandroide library. This should be fixed too. -->
+							<model>
+								<id>send_string</id>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>0-0</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>1-1</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>2-2</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>3-3</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>4-4</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>5-5</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>6-6</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>7-7</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>8-8</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>9-9</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>10-10</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>11-11</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>12-12</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>13-13</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>14-14</position>
+								</data>
+								<data>
+									<id>value</id>
+									<format>uint8</format>
+									<position>15-15</position>
+								</data>
+							</model>
+							<!-- END: added by GL -->
+						</writable>
+					</characteristic>
+				</characteristics>
+				
+			</service>
+		</ble>
+		<!-- abstraction used by the library -->
+		<items>
+			<!-- rootItems which may contein 'subItems' used by the library -->
+			<rootitem>
+				<name></name>
+				<init_models>
+					<init>
+						<id>general_io_init</id>
+						<sequence>
+						
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>start_notify</type>
+								<readableCharacteristic>
+									<name>TX Characteristic</name>
+								</readableCharacteristic>
+								<post_delay>2000</post_delay>
+							</sub_action>
+
+						<!-- the last sub_action of the init trigger the callback to the objects -->
+							<sub_action>
+								<!-- the type is a special word for the library, pointing to a specific function -->
+								<type>idle</type>
+								<post_delay>5000</post_delay>
+							</sub_action>
+							
+						</sequence>
+						<post_delay>0</post_delay>
+					</init>
+				</init_models>
+				
+				
+				<!-- TODO: add more subItems which has name and bletype, 
+				they will be inherited by the related Item sons -->
+				<subitems>
+
+					<!-- BEGIN: added by GL to make SandroideDevice work -->
+					<item>
+						<name>sandroide_device</name>
+						<!-- shall match one of the bletype defined by the library -->
+						<bletype>ble_deviceIO</bletype>
+						<!-- service and attribute mandatory for work with this item,
+						service and attribute shall match the name reported in the ble section of this xml.
+						up to now only one service for item allowed -->
+						<service>
+							<name>Nordic UART Service</name>
+							<characteristic>TX Characteristic</characteristic>
+							<characteristic>RX Characteristic</characteristic>
+						</service>
+						
+						<!-- the data will be transmitted through the callback in the same order they are in here -->
+						<readableCharacteristic>
+							<name>TX Characteristic</name>
+							<!-- Here we use an existing parser id, but its execution is replaced in DeviceControl.java:259 for SandroideDevice BleItems: this behaviour should be fixed in next SandroidE versions -->
+							<dataCluster>rbs_gio0</dataCluster>
+						</readableCharacteristic>
+						
+						<action>
+							<id>send_string_value</id>
+							<sequence>
+								<sub_action>
+									<!-- the type is a special word for the library, pointing to a specific function -->
+									<type>write</type>
+									<writableCharacteristic>
+										<name>RX Characteristic</name>
+										<model>send_string</model>
+									</writableCharacteristic>
+									<post_delay>0</post_delay>
+								</sub_action>
+								<!-- this is the delay introduced before the next subaction involving BLE, it doesn't affect the main thread -->
+							</sequence>
+							<post_delay>500</post_delay>
+						</action>
+						
+						<init>
+							<id>general_io_init</id>
+						</init>
+					</item>
+					<!-- END: added by GL to make SandroideDevice work -->
+
 
 				</subitems>
 			</rootitem>

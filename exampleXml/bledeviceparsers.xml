@@ -1,5 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <parsers>
+
+	<parser>
+		<parser_id>HEART_RATE_MEAS</parser_id>
+		<parsing>
+			<sub_parser>
+				<!-- TODO: the data itself should tell how the related item is -->
+				<dataCluster>
+					<dataClusterModel>heart_rate_meas</dataClusterModel>
+					<id>heart_rate_meas</id>
+			
+				</dataCluster>
+			</sub_parser>
+		</parsing>
+	</parser>
+
 	<parser>
 		<parser_id>ST_ACCELEROMETER</parser_id>
 		<parsing>
